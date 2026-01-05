@@ -1,0 +1,17 @@
+<?php
+
+// Déclaration des variables
+$name = "Clavier mécanique";
+$price = 129.99;
+$stock = 42;
+$onSale = true;
+
+// Vérification des types
+var_dump($name);
+var_dump($price);
+var_dump($stock);
+var_dump($onSale);
+
+// Phrase finale
+echo "Le produit $name coûte $price €";
+
