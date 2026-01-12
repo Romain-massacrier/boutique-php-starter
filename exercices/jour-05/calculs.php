@@ -23,3 +23,4 @@ echo "TVA (" . $vatRate . "%) : " . $vat . " €</br>";
 echo "Prix TTC : " . $ttc . " €</br>";
 echo "Prix final après remise de " . $discountPercentage . "% : " . $finalPrice . " €</br>";
 ?>
+

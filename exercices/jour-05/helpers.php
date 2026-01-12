@@ -8,7 +8,7 @@ function formatPrice(float $amount, string $currency = "€"): string {
     return number_format($amount, 2, ",", " ") . " " . $currency;
 }
 
-/* AFFCalculs */
+/* Calculs */
 
 function calculateVAT(float $priceExcludingTax, float $rate): float {
     return $priceExcludingTax * ($rate / 100);

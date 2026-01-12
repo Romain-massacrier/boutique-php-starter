@@ -1,11 +1,7 @@
 <?php
 declare(strict_types=1);
 
-/*
-|--------------------------------------------------------------------------
-| Fonctions de calcul
-|--------------------------------------------------------------------------
-*/
+/*Fonctions de calcul */
 
 function calculateIncludingTax(float $priceExcludingTax, float $vat = 20): float
 {
@@ -33,11 +29,7 @@ function calculateTotal(array $cart): float
     return round($total, 2);
 }
 
-/*
-|--------------------------------------------------------------------------
-| Fonctions de formatage
-|--------------------------------------------------------------------------
-*/
+/* Fonctions de formatage */
 
 function formatPrice(float $amount): string
 {
@@ -86,11 +78,7 @@ function formatDate(string $date): string
     return $day . ' ' . $monthName . ' ' . $year;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Fonctions d'affichage
-|--------------------------------------------------------------------------
-*/
+/* Fonctions d'affichage */
 
 function displayStockStatus(int $stock): string
 {
@@ -148,11 +136,7 @@ function displayBadges(array $product): string
     return '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;">' . implode('', $badges) . '</div>';
 }
 
-/*
-|--------------------------------------------------------------------------
-| Fonctions de validation
-|--------------------------------------------------------------------------
-*/
+/* Fonctions de validation */
 
 function validateEmail(string $email): bool
 {
@@ -167,11 +151,7 @@ function validatePrice(mixed $price): bool
     return (float) $price > 0;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Fonction de debug
-|--------------------------------------------------------------------------
-*/
+/* Fonction de debug */
 
 function dump_and_die(mixed ...$vars): void
 {

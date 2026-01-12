@@ -51,6 +51,15 @@ foreach ($_SESSION["cart"] as $item) {
     $final = ((float)$item["discount"] > 0) ? calculateDiscount($ttc, (float)$item["discount"]) : $ttc;
     $cartTotal += $final;
 }
+
+// Vider le panier
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["clear_cart"])) {
+    $_SESSION["cart"] = [];
+
+    header("Location: " . $_SERVER["PHP_SELF"]);
+    exit;
+}
+
 ?>
 <!doctype html>
 <html lang="fr">
@@ -97,22 +106,31 @@ foreach ($_SESSION["cart"] as $item) {
     </div>
 
     <div class="cart">
-        <h2>Panier (<?= count($_SESSION["cart"]) ?>)</h2>
-        <?php if (count($_SESSION["cart"]) === 0): ?>
-            <p><small>Panier vide</small></p>
-        <?php else: ?>
-            <ul>
-                <?php foreach ($_SESSION["cart"] as $item): ?>
-                    <li>
-                        <?= htmlspecialchars($item["name"]) ?>
-                        <small>(<?= formatPrice(calculateIncludingTax((float)$item["price"])) ?>)</small>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-            <p><strong>Total:</strong> <?= formatPrice($cartTotal) ?></p>
-        <?php endif; ?>
-    </div>
+    <h2>Panier (<?= count($_SESSION["cart"]) ?>)</h2>
+
+    <?php if (count($_SESSION["cart"]) === 0): ?>
+        <p><small>Panier vide</small></p>
+    <?php else: ?>
+        <ul>
+            <?php foreach ($_SESSION["cart"] as $item): ?>
+                <li>
+                    <?= htmlspecialchars($item["name"]) ?>
+                    <small>(<?= formatPrice(calculateIncludingTax((float)$item["price"])) ?>)</small>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+
+        <p><strong>Total:</strong> <?= formatPrice($cartTotal) ?></p>
+
+        <!-- BOUTON ICI -->
+        <form method="post" style="margin-top:10px;">
+            <button type="submit" name="clear_cart">
+                Vider le panier
+            </button>
+        </form>
+    <?php endif; ?>
 </div>
+
 
 <div class="grid">
 <?php foreach ($products as $i => $product): ?>

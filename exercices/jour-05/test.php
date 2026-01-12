@@ -1,11 +1,8 @@
 <?php
 declare(strict_types=1);
 
-/*
-|--------------------------------------------------------------------------
-| exercices/jour-05/test-ecommerce-helpers.php
-|--------------------------------------------------------------------------
-| Page de test qui démontre chaque fonction
+/* exercices/jour-05/test-ecommerce-helpers.php
+Page de test qui démontre chaque fonction
 */
 
 require_once __DIR__ . '/ecommerce-helpers.php';
