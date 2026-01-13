@@ -1,8 +1,5 @@
 <?php
-
-// 50 produit rétrogaming réels avec name, price, category, instock
-// barre latérale avec recherche texte, filtre catégories (checkbox multiples), slider/inputs prix min-max, tri (prix croissant, décroissant, nom A-Z, Z-A), 
-// pagination (10 produits par page) zone principale grille de produits filtré, compteur :" X produits trouvés"
+  
 
 $products = [
     ["name" => "Super Mario Bros. (NES)", "price" => 29.99, "category" => "Plateforme", "instock" => true],

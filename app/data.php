@@ -2,6 +2,7 @@
 // starter-project/app/data.php
 
 $products = [
+
     [
         "name" => "Famicom",
         "price" => 39.99,
@@ -68,3 +69,110 @@ $products = [
         "description" => "Console révolutionnaire qui a popularisé la 3D dans les jeux vidéo."
     ],
 ];
+
+$games = [
+    
+    [
+        "name" => "Super Mario Bros.",
+        "price" => 29.99,
+        "stock" => 34,
+        "new" => true,
+        "console" => "Famicom",
+        "image" => "https://en.wikipedia.org/wiki/Special:FilePath/Super%20Mario%20Bros.%20box.png",
+        "description" => "Le classique jeu de plateforme où Mario doit sauver la princesse Peach."
+    ],
+    [
+        "name" => "The Legend of Zelda: Ocarina of Time",
+        "price" => 49.99,
+        "stock" => 12,
+        "new" => false,
+        "console" => "Nintendo 64",
+        "image" => "https://cdn.thegamesdb.net/images/original/boxart/front/128689-1.jpg",
+        "description" => "Un jeu d’aventure épique où Link doit sauver Hyrule du mal."
+    ],
+    [
+        "name" => "Sonic the Hedgehog",
+        "price" => 19.99,
+        "stock" => 20,
+        "new" => true,
+        "console" => "Megadrive",
+        "image" => "https://cdn.thegamesdb.net/images/original/boxart/front/99155-1.jpg",
+        "description" => "Le jeu de plateforme rapide mettant en vedette le hérisson bleu emblématique."
+    ],
+    [
+        "name" => "Street Fighter II",
+        "price" => 39.99,
+        "stock" => 8,
+        "new" => false,
+        "console" => "Super Famicom Jr",
+        "image" => "https://cdn.thegamesdb.net/images/original/boxart/front/3122-1.jpg",
+        "description" => "Le célèbre jeu de combat qui a défini le genre des jeux de combat."
+    ],
+    [
+        "name" => "Castlevania: Symphony of the Night",
+        "price" => 44.99,
+        "stock" => 5,
+        "new" => true,
+        "console" => "Playstation 1",
+        "image" => "https://cdn.thegamesdb.net/images/original/boxart/front/130812-1.jpg",
+        "description" => "Un jeu d’action-aventure gothique où Alucard explore un château rempli de monstres."
+    ],
+    [
+        "name" => "Metal Slug",
+        "price" => 34.99,
+        "stock" => 10,
+        "new" => false,
+        "console" => "Neo Geo AES",
+        "image" => "https://cdn.thegamesdb.net/images/original/boxart/front/222-1.jpg",
+        "description" => "Un jeu de tir à défilement horizontal connu pour son action frénétique et son humour."
+    ],
+    [
+        "name" => "Final Fantasy VIII",
+        "price" => 59.99,
+        "stock" => 14,
+        "new" => true,
+        "console" => "Playstation 1",
+        "image" => "https://cdn.thegamesdb.net/images/original/boxart/front/526-1.jpg",
+        "description" => "Un RPG épique où Squall Leonhart et ses alliés affrontent une sorcière manipulant le temps et le destin du monde."
+    ],
+    [
+        "name" => "Donkey Kong Country",
+        "price" => 29.99,
+        "stock" => 18,
+        "new" => false,
+        "console" => "Super Famicom Jr",
+        "image" => "https://cdn.thegamesdb.net/images/original/boxart/front/131-1.jpg",
+        "description" => "Un jeu de plateforme mettant en vedette Donkey Kong et Diddy Kong dans une aventure jungle."
+    ],
+    [
+        "name" => "Resident Evil 2",
+        "price" => 49.99,
+        "stock" => 6,
+        "new" => true,
+        "console" => "Playstation 1",
+        "image" => "https://cdn.thegamesdb.net/images/original/boxart/front/78846-1.jpg",
+        "description" => "Un jeu d’horreur de survie où les joueurs affrontent des zombies dans Raccoon City."
+    ],
+    [
+        "name" => "Mega Man 2",
+        "price" => 24.99,
+        "stock" => 22,
+        "new" => false,
+        "console" => "Famicom",
+        "image" => "https://cdn.thegamesdb.net/images/original/boxart/front/104873-1.jpg",
+        "description" => "Un jeu de plateforme classique où Mega Man affronte les robots du Dr. Wily."      
+    ],  
+    
+];  
+
+// id pour chaque produit de $products et $games
+
+foreach ($products as $index => &$product) {
+    $product['id'] = $index + 1;
+}
+unset($product);    
+foreach ($games as $index => &$game) {
+    $game['id'] = count($products) + $index + 1;
+}
+unset($game);
+

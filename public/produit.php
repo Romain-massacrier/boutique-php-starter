@@ -1,55 +1,96 @@
 <?php
-$name = "Clavier mécanique";
-$priceHT = 100;
-$vat = 20;
-$stock = true;
+require_once __DIR__ . '/../app/data.php';
+require_once __DIR__ . '/../app/helpers.php';
 
-$priceTTC = $priceHT + ($priceHT * $vat / 100);
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+if ($id === null || $id === false) {
+    http_response_code(400);
+    echo "ID invalide";
+    exit;
+}
+
+// Recherche du produit par son vrai id
+$product = null;
+foreach ($products as $p) {
+    if ((int)$p['id'] === (int)$id) {
+        $product = $p;
+        break;
+    }
+}
+
+if (!$product) {
+    http_response_code(404);
+    echo "Produit non trouvé";
+    exit;
+}
+
+// Sécurisation des champs
+$name = $product['name'] ?? 'Produit';
+$image = $product['image'] ?? 'https://via.placeholder.com/520x520?text=No+Image';
+$desc = $product['description'] ?? '';
+$price = $product['price'] ?? 0;
+$stock = $product['stock'] ?? 0;
+$discount = $product['discount'] ?? 0;
+$vat = 20;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title><?= $name ?></title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            padding: 40px;
-        }
-        h1 {
-            margin-top: 0;
-        }
-        .price {
-            font-size: 22px;
-            font-weight: bold;
-        }
-        .stock {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #fff;
-            background: <?= $stock ? "#2ecc71" : "#e74c3c" ?>;
-        }
-    </style>
+    <title><?php echo htmlspecialchars($name); ?></title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<h1><?= $name ?></h1>
+<header>
+    <h1><?php echo htmlspecialchars($name); ?></h1>
+    <nav>
+        <a href="catalogue.php">Retour catalogue</a>
+    </nav>
+</header>
 
-<p>Prix HT : <?= number_format($priceHT, 2, ",", " ") ?> €</p>
-<p>TVA : <?= $vat ?> %</p>
+<main>
+    <div class="product-detail">
 
-<p class="price">
-    Prix TTC : <?= number_format($priceTTC, 2, ",", " ") ?> €
-</p>
+        <img src="<?php echo htmlspecialchars($image); ?>" alt="<?php echo htmlspecialchars($name); ?>">
 
-<span class="stock">
-    <?= $stock ? "En stock" : "Rupture" ?>
-</span>
+        <div class="product-info">
+
+            <div class="badges">
+                <?php
+                if (function_exists('displayBadges')) {
+                    echo displayBadges($product);
+                }
+                ?>
+            </div>
+
+            <div class="price">
+                <?php
+                if (function_exists('displayPriceTTC')) {
+                    echo displayPriceTTC($price, $vat, $discount);
+                } else {
+                    echo number_format($price, 2, ',', ' ') . " €";
+                }
+                ?>
+            </div>
+
+            <div class="stock-status">
+                <?php
+                if (function_exists('displayStockStatus')) {
+                    echo displayStockStatus($stock);
+                } else {
+                    echo ($stock > 0) ? "En stock" : "Rupture";
+                }
+                ?>
+            </div>
+
+            <?php if ($desc): ?>
+                <p><?php echo htmlspecialchars($desc); ?></p>
+            <?php endif; ?>
+
+        </div>
+    </div>
+</main>
 
 </body>
 </html>

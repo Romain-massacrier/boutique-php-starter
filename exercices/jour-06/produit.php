@@ -1,7 +1,5 @@
 <?php
 
-// créer un tableau de 5 prdduits avec id
-
 $products = [
     1 => ["name" => "Ordinateur portable", "price" => 799.99],
     2 => ["name" => "Smartphone", "price" => 499.99],

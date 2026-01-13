@@ -1,52 +1,62 @@
 <?php
-// starter-project/app/helpers.php
-declare(strict_types=1);
 
-function calculateIncludingTax(float $priceExcludingTax, float $vat = 20): float {
-    return $priceExcludingTax * (1 + $vat / 100);
+function formatPrice(float $price): string
+{
+    return number_format($price, 2, ",", " ") . " €";
 }
 
-function calculateDiscount(float $price, float $percentage): float {
-    return $price * (1 - $percentage / 100);
+function calculateIncludingTax(float $priceHT, float $vatPercent): float
+{
+    return $priceHT * (1 + ($vatPercent / 100));
 }
 
-function formatPrice(float $amount): string {
-    return number_format($amount, 2, ",", " ") . " €";
+function calculateDiscount(float $price, float $discountPercent): float
+{
+    return $price * (1 - ($discountPercent / 100));
 }
 
-function displayStockStatus(int $stock): string {
-    if ($stock <= 0) {
-        return '<p class="stock rupture">Rupture</p>';
-    }
-    if ($stock < 5) {
-        return '<p class="stock faible">Stock faible (' . $stock . ')</p>';
-    }
-    return '<p class="stock en-stock">En stock (' . $stock . ')</p>';
-}
-
-function displayBadges(array $product): string {
-    $html = '';
-
+function displayBadges(array $product): string
+{
     $isNew = !empty($product["new"]);
     $discount = (float)($product["discount"] ?? 0);
 
+    $html = "";
+
     if ($isNew) {
-        $html .= '<span class="badge badge-new">Nouveau</span> ';
+        $html .= '<span class="badge badge-new">NOUVEAU</span> ';
     }
+
     if ($discount > 0) {
-        $html .= '<span class="badge badge-sale">Promo -' . (int)$discount . '%</span> ';
+        $html .= '<span class="badge badge-sale">PROMO -' . (int)$discount . '%</span> ';
     }
 
     return trim($html);
 }
 
-function displayPriceTTC(float $priceHT, float $vat = 20, float $discount = 0): string {
-    $ttc = calculateIncludingTax($priceHT, $vat);
+function displayPriceTTC(float $priceHT, float $vatPercent, float $discountPercent = 0): string
+{
+    $ttc = calculateIncludingTax($priceHT, $vatPercent);
 
-    if ($discount > 0) {
-        $final = calculateDiscount($ttc, $discount);
-        return '<span class="price-old">' . formatPrice($ttc) . '</span> <span class="price-new">' . formatPrice($final) . '</span>';
+    if ($discountPercent > 0) {
+        $final = calculateDiscount($ttc, $discountPercent);
+
+        return
+            '<span class="price-old">' . htmlspecialchars(formatPrice($ttc)) . '</span> ' .
+            '<span class="price-new">' . htmlspecialchars(formatPrice($final)) . '</span>';
     }
 
-    return '<span class="price">' . formatPrice($ttc) . '</span>';
+    return '<span class="price">' . htmlspecialchars(formatPrice($ttc)) . '</span>';
+}
+
+function displayStockStatus(int $stock): string
+{
+    if ($stock <= 0) {
+        return '<div class="stock rupture">Rupture de stock</div>';
+    }
+
+    if ($stock <= 5) {
+        return '<div class="stock faible">Stock faible (' . (int)$stock . ')</div>';
+    }
+
+    return '<div class="stock en-stock">En stock (' . (int)$stock . ')</div>';
 }
