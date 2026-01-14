@@ -3,8 +3,11 @@
 
 session_start();
 
-require_once __DIR__ . "/../app/data.php";     // $products, $games
+require_once __DIR__ . "/../app/Entity/Product.php";
+require_once __DIR__ . "/../app/data.php";     // $products (objets Product), $games (tableaux)
 require_once __DIR__ . "/../app/helpers.php";  // formatPrice, calculateIncludingTax, calculateDiscount
+
+use App\Entity\Product;
 
 // Panier
 if (!isset($_SESSION["cart"]) || !is_array($_SESSION["cart"])) {
@@ -21,7 +24,7 @@ if (!in_array($view, ["consoles", "jeux"], true)) {
 $q = trim((string)($_GET["q"] ?? ""));
 
 // Filtres existants (inchangés)
-$status = (string)($_GET["status"] ?? "");            // consoles: "", "en_stock", "rupture", "promo", "new"
+$status = (string)($_GET["status"] ?? "");               // consoles: "", "en_stock", "rupture", "promo", "new"
 $consoleFilter = trim((string)($_GET["console"] ?? "")); // jeux
 $categoryFilter = trim((string)($_GET["cat"] ?? ""));    // jeux
 
@@ -40,7 +43,9 @@ function getGameCategory(array $g): string {
 // Listes pour selects
 $allConsoles = [];
 foreach ($products as $p) {
-    $allConsoles[] = (string)($p["name"] ?? "");
+    if ($p instanceof Product) {
+        $allConsoles[] = $p->getName();
+    }
 }
 $allConsoles = array_values(array_unique(array_filter($allConsoles, fn($c) => $c !== "")));
 sort($allConsoles);
@@ -57,12 +62,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_to_cart"])) {
     $type = (string)($_POST["type"] ?? "product");
     $index = (int)($_POST["index"] ?? -1);
 
-    if ($type === "product" && isset($products[$index])) {
+    if ($type === "product" && isset($products[$index]) && $products[$index] instanceof Product) {
         $p = $products[$index];
+
         $_SESSION["cart"][] = [
-            "name" => (string)($p["name"] ?? "Produit"),
-            "price" => (float)($p["price"] ?? 0),
-            "discount" => (float)($p["discount"] ?? 0),
+            "name" => $p->getName(),
+            "price" => $p->getPrice(),
+            "discount" => (float)$p->getDiscount(),
             "vat" => 20.0
         ];
     }
@@ -98,8 +104,10 @@ $onSale = 0;
 $outOfStock = 0;
 
 foreach ($products as $product) {
-    $discount = (float)($product["discount"] ?? 0);
-    $stock = (int)($product["stock"] ?? 0);
+    if (!($product instanceof Product)) continue;
+
+    $discount = (float)$product->getDiscount();
+    $stock = (int)$product->getStock();
 
     if ($stock > 0) $inStock++;
     if ($discount > 0) $onSale++;
@@ -114,12 +122,14 @@ foreach ($_SESSION["cart"] as $item) {
     $cartTotal += $final;
 }
 
-// Filtres consoles
+// Filtres consoles (objets Product)
 $filteredProducts = array_filter($products, function($p) use ($q, $status) {
-    $name = (string)($p["name"] ?? "");
-    $stock = (int)($p["stock"] ?? 0);
-    $discount = (float)($p["discount"] ?? 0);
-    $isNew = (bool)($p["new"] ?? false);
+    if (!($p instanceof Product)) return false;
+
+    $name = $p->getName();
+    $stock = (int)$p->getStock();
+    $discount = (float)$p->getDiscount();
+    $isNew = (bool)$p->isNew();
 
     if (!matchesSearch($name, $q)) return false;
 
@@ -131,7 +141,7 @@ $filteredProducts = array_filter($products, function($p) use ($q, $status) {
     return true;
 });
 
-// Filtres jeux
+// Filtres jeux (tableaux)
 $filteredGames = array_filter($games, function($g) use ($q, $consoleFilter, $categoryFilter) {
     $name = (string)($g["name"] ?? "");
     $console = (string)($g["console"] ?? "");
@@ -153,7 +163,7 @@ foreach ($filteredGames as $idx => $g) {
 }
 ksort($gamesByConsole);
 
-// Petites fonctions de rendu pour coller au template
+// Petites fonctions de rendu
 function stockClass(int $stock): string {
     if ($stock <= 0) return "product-card__stock--out";
     if ($stock <= 3) return "product-card__stock--low";
@@ -164,10 +174,10 @@ function stockText(int $stock): string {
     if ($stock <= 3) return "⚠ Plus que " . $stock;
     return "✓ En stock (" . $stock . ")";
 }
-function renderBadgesForProduct(array $p): string {
-    $stock = (int)($p["stock"] ?? 0);
-    $discount = (float)($p["discount"] ?? 0);
-    $isNew = (bool)($p["new"] ?? false);
+function renderBadgesForProduct(Product $p): string {
+    $stock = (int)$p->getStock();
+    $discount = (float)$p->getDiscount();
+    $isNew = (bool)$p->isNew();
 
     $out = [];
     if ($isNew) $out[] = '<span class="badge badge--new">Nouveau</span>';
@@ -198,19 +208,19 @@ $cartCount = count($_SESSION["cart"]);
   <body>
     <header class="header">
       <div class="container header__container">
-        <a href="index.html" class="header__logo">🛍️ MaBoutique</a>
+        <a href="index.php" class="header__logo">🛍️ MaBoutique</a>
 
         <nav class="header__nav">
-          <a href="index.html" class="header__nav-link">Accueil</a>
+          <a href="index.php" class="header__nav-link">Accueil</a>
           <a href="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>?view=<?= htmlspecialchars($view) ?>" class="header__nav-link header__nav-link--active">Catalogue</a>
-          <a href="contact.html" class="header__nav-link">Contact</a>
+          <a href="contact.php" class="header__nav-link">Contact</a>
         </nav>
 
         <div class="header__actions">
-          <a href="panier.html" class="header__cart">
+          <a href="panier.php" class="header__cart">
             🛒<span class="header__cart-badge"><?= (int)$cartCount ?></span>
           </a>
-          <a href="connexion.html" class="btn btn--primary btn--sm">Connexion</a>
+          <a href="connexion.php" class="btn btn--primary btn--sm">Connexion</a>
         </div>
 
         <button class="header__menu-toggle">☰</button>
@@ -353,13 +363,15 @@ $cartCount = count($_SESSION["cart"]);
               <div class="products-grid">
                 <?php foreach ($filteredProducts as $i => $product): ?>
                   <?php
-                    $name = (string)($product["name"] ?? "Produit");
-                    $img = (string)($product["image"] ?? "");
-                    $desc = (string)($product["description"] ?? "");
-                    $stock = (int)($product["stock"] ?? 0);
-                    $discount = (float)($product["discount"] ?? 0);
+                    if (!($product instanceof Product)) continue;
 
-                    [$ttc, $final, $hasDiscount] = priceParts((float)($product["price"] ?? 0), 20.0, $discount);
+                    $name = $product->getName();
+                    $img = $product->getImage();
+                    $desc = $product->getDescription();
+                    $stock = (int)$product->getStock();
+                    $discount = (float)$product->getDiscount();
+
+                    [$ttc, $final, $hasDiscount] = priceParts((float)$product->getPrice(), 20.0, $discount);
                   ?>
                   <article class="product-card">
                     <div class="product-card__image-wrapper">
@@ -521,17 +533,17 @@ $cartCount = count($_SESSION["cart"]);
           <div class="footer__section">
             <h4>Navigation</h4>
             <ul>
-              <li><a href="index.html">Accueil</a></li>
+              <li><a href="index.php">Accueil</a></li>
               <li><a href="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>?view=<?= htmlspecialchars($view) ?>">Catalogue</a></li>
-              <li><a href="contact.html">Contact</a></li>
+              <li><a href="contact.php">Contact</a></li>
             </ul>
           </div>
           <div class="footer__section">
             <h4>Compte</h4>
             <ul>
-              <li><a href="connexion.html">Connexion</a></li>
-              <li><a href="inscription.html">Inscription</a></li>
-              <li><a href="panier.html">Panier</a></li>
+              <li><a href="connexion.php">Connexion</a></li>
+              <li><a href="inscription.php">Inscription</a></li>
+              <li><a href="panier.php">Panier</a></li>
             </ul>
           </div>
           <div class="footer__section">
