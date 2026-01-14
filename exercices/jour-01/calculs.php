@@ -1,20 +1,13 @@
 <?php
 
-// Déclarations
 $priceExcludingTax = 100;
-$vat = 20;
+$vat = 20;      // en %
 $quantity = 3;
 
-// Calculs
 $vatAmount = $priceExcludingTax * ($vat / 100);
-$priceIncludingTax = $priceExcludingTax + $vatAmount;
-$totalPrice = $priceIncludingTax * $quantity;
+$priceIncludingTax = $priceExcludingTax * (1 + ($vat / 100));
+$total = $priceIncludingTax * $quantity;
 
-// Affichage
-echo "<pre>";
-echo "Prix HT : $priceExcludingTax €\n";
-echo "TVA ($vat %) : $vatAmount €\n";
+echo "Montant TVA : $vatAmount €\n";
 echo "Prix TTC unitaire : $priceIncludingTax €\n";
-echo "Quantité : $quantity\n";
-echo "Total TTC : $totalPrice €\n";
-echo "</pre>";
+echo "Total pour $quantity : $total €\n";

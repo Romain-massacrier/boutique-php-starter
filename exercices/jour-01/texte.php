@@ -3,17 +3,15 @@
 $brand = "Nike";
 $model = "Air Max";
 
-/* concaténation (.) */
-echo "Chaussures " . $brand . " " . $model . "<br>";
+// 1) Concaténation (.)
+echo "Chaussures " . $brand . " " . $model;
 
-/* interpolation ("...") */
-echo "Chaussures $brand $model<br>";
+// 2) Interpolation ("...")
+echo "Chaussures $brand $model";
 
-/* sprintf() */
-echo sprintf("Chaussures %s %s<br>", $brand, $model);
+// 3) sprintf()
+echo sprintf("Chaussures %s %s", $brand, $model);
 
-/*  différence entre guillemets doubles et simples */
 $price = 99.99;
-
-echo "Prix : $price €<br>";
-echo 'Prix : $price €<br>';
+echo "Prix : $price €";  // Que s'affiche-t-il ? Affiche : Prix : 99.99 €
+echo 'Prix : $price €';  // Et là ? Affiche : Prix : $price €

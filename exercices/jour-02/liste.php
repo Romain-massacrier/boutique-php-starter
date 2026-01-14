@@ -1,21 +1,10 @@
 <?php
-
-$groceries = [
-    "Clavier",
-    "Souris",
-    "Tapis de souris",
-    "Disque Dur",
-    "Ram",
-];
-
-echo "Premier article : " . $groceries[0] . "<br>";
-echo "Dernier article : " . $groceries[count($groceries) - 1] . "<br>";
-echo "Nombre total d'articles : " . count($groceries) . "<br><br>";
-
-// array_push ajoute un ou plusieurs éléments à la fin d’un tableau
-array_push($groceries, "Micro", "Casque");
-
-// unset supprime un élément sélectioné 
+$groceries = ["Pomme", "Banane", "Chocolat", "cerise", "RTX 5080"];
+array_push($groceries, "Raptor", "Tourte");
+$groceries = array_values($groceries);
 unset($groceries[2]);
-
+$groceries = array_values($groceries);
+echo " Premier article : " . $groceries[0];
+echo " Dernier article : " . $groceries[count($groceries) - 1];
+echo " Nombre total d'articles : " . count($groceries);
 var_dump($groceries);

@@ -1,20 +1,39 @@
 <?php
+$nom = $_GET['name'] ?? 'visiteur';
 
-// Récupérer le paramètre "name" depuis l'URL
-$name = $_GET["name"] ?? null;
+$age = $_GET['age'] ?? null;
 
-// Récupérer le paramètre "age" depuis l'URL
-$age = $_GET["age"] ?? null;
-
-// Si aucun nom n'est fourni, on met "visiteur"
-if ($name === null || $name === "") {
-    echo "Bonjour visiteur !";
-} else {
-
-    // Si l'âge est fourni
-    if ($age !== null && $age !== "") {
-        echo "Bonjour " . htmlspecialchars($name) . ", vous avez " . (int)$age . " ans !";
-    } else {
-        echo "Bonjour " . htmlspecialchars($name) . " !";
-    }
+if (empty($nom) ) {
+    $nom = "visiteur";
 }
+
+$nomPropre = htmlspecialchars($nom);
+$agePropre = htmlspecialchars($age);
+
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exercice Bonjour</title>
+</head>
+
+<body>
+    <h1>
+        <?php
+        if ($age) {
+            echo "Bonjour $nomPropre, vous avez $agePropre ans !";
+        } else {
+            echo "Bonjour $nomPropre !";
+        }
+        // je peux tester la variable $name avec http://localhost:8000/exercices/jour-06/bonjour.php?name=maxime
+        // pour tester 2 variables je peux rajouter un & dans l'URL
+        // comme ici http://localhost:8000/exercices/jour-06/bonjour.php?name=maxime&age=54
+        ?>
+    </h1>
+
+</body>
+
+</html>

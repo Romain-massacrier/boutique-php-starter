@@ -1,197 +1,227 @@
 <?php
-declare(strict_types=1);
 
-/*Fonctions de calcul */
+// Calculs
 
-function calculateIncludingTax(float $priceExcludingTax, float $vat = 20): float
+function calculateIncludingTax($prixHorsTaxe, $tva = 20)
 {
-    $multiplier = 1 + ($vat / 100);
-    return round($priceExcludingTax * $multiplier, 2);
+    return $prixHorsTaxe * (1 + $tva / 100);
 }
 
-function calculateDiscount(float $price, float $percentage): float
+function calculateDiscount($prix, $pourcentage)
 {
-    if ($percentage <= 0) {
-        return round($price, 2);
-    }
-    $discounted = $price * (1 - ($percentage / 100));
-    return round(max(0, $discounted), 2);
+    return $prix * (1 - $pourcentage / 100);
 }
 
-function calculateTotal(array $cart): float
+function calculateTotal($panier)
 {
-    $total = 0.0;
-    foreach ($cart as $item) {
-        if (is_numeric($item)) {
-            $total += (float) $item;
-        }
+    $total = 0;
+    foreach ($panier as $article) {
+        $total += $article['price'] * $article['quantity']; // c'est equivalent a ça : 
+        //$total = $total + ($article['price'] * $article['quantity']);
     }
-    return round($total, 2);
+    return $total;
 }
 
-/* Fonctions de formatage */
+// Formatage (Date et Prix)
 
-function formatPrice(float $amount): string
+function formatPrice($montant)
 {
-    // 1234.5 -> "1 234,50 €"
-    $formatted = number_format($amount, 2, ',', ' ');
-    return $formatted . ' €';
+    return number_format($montant, 2, ',', ' ') . ' €';
 }
 
-function formatDate(string $date): string
+function formatDate($dateTexte)
 {
-    // Accepte "YYYY-MM-DD" ou toute date parseable par strtotime()
-    $timestamp = strtotime($date);
-    if ($timestamp === false) {
-        return $date; // fallback
-    }
+    $timestamp = strtotime($dateTexte);
 
-    // Si l'extension intl est dispo, c'est le plus propre
-    if (class_exists('IntlDateFormatter')) {
-        $formatter = new IntlDateFormatter(
-            'fr_FR',
-            IntlDateFormatter::LONG,
-            IntlDateFormatter::NONE,
-            date_default_timezone_get(),
-            IntlDateFormatter::GREGORIAN,
-            'd MMMM y'
-        );
-
-        $out = $formatter->format($timestamp);
-        if (is_string($out) && $out !== '') {
-            return $out;
-        }
-    }
-
-    // Fallback manuel
-    $months = [
-        1 => 'janvier', 2 => 'février', 3 => 'mars', 4 => 'avril',
-        5 => 'mai', 6 => 'juin', 7 => 'juillet', 8 => 'août',
-        9 => 'septembre', 10 => 'octobre', 11 => 'novembre', 12 => 'décembre',
+    // Tableau simple pour traduire les mois
+    $moisFr = [
+        1 => 'janvier',
+        2 => 'février',
+        3 => 'mars',
+        4 => 'avril',
+        5 => 'mai',
+        6 => 'juin',
+        7 => 'juillet',
+        8 => 'août',
+        9 => 'septembre',
+        10 => 'octobre',
+        11 => 'novembre',
+        12 => 'décembre'
     ];
 
-    $day = (int) date('d', $timestamp);
-    $month = (int) date('n', $timestamp);
-    $year = (int) date('Y', $timestamp);
+    $jour = date('d', $timestamp);
+    $numeroMois = date('n', $timestamp);
+    $annee = date('Y', $timestamp);
 
-    $monthName = $months[$month] ?? date('m', $timestamp);
-    return $day . ' ' . $monthName . ' ' . $year;
+    return $jour . ' ' . $moisFr[$numeroMois] . ' ' . $annee;
 }
 
-/* Fonctions d'affichage */
-
-function displayStockStatus(int $stock): string
+// Affichage (HTML)
+function displayStockStatus($stock)
 {
     if ($stock > 10) {
-        return '<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:#e8f5e9;color:#1b5e20;font-weight:700;">En stock</span>';
+        return '<span style="color: green;">En stock (' . $stock . ')</span>';
+    } elseif ($stock > 0) {
+        return '<span style="color: orange;">Peu de stock (' . $stock . ')</span>';
+    } else {
+        return '<span style="color: red;">Rupture de stock</span>';
     }
-
-    if ($stock > 0) {
-        return '<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:#fff3e0;color:#e65100;font-weight:700;">Derniers articles</span>';
-    }
-
-    return '<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:#ffebee;color:#b71c1c;font-weight:700;">Rupture de stock</span>';
 }
 
-function displayBadges(array $product): string
+function displayBadges($produit)
 {
-    $badges = [];
-
-    $stock = isset($product['stock']) ? (int) $product['stock'] : null;
-    $discount = isset($product['discount']) ? (float) $product['discount'] : 0.0;
-
-    // NEW: bool is_new ou date_added < 30 jours
-    $isNew = false;
-    if (isset($product['is_new'])) {
-        $isNew = (bool) $product['is_new'];
-    } elseif (!empty($product['date_added'])) {
-        $days = (time() - strtotime((string) $product['date_added'])) / 86400;
-        if (is_finite($days) && $days >= 0 && $days < 30) {
-            $isNew = true;
-        }
+    $html = '';
+    if ($produit['is_new'] == true) {
+        $html .= '[NOUVEAU] ';
     }
-
-    // Badges
-    if ($isNew) {
-        $badges[] = '<span style="display:inline-block;padding:4px 10px;border-radius:6px;background:#e3f2fd;color:#0d47a1;font-weight:700;">Nouveau</span>';
+    if ($produit['on_sale'] == true) {
+        $html .= '[PROMO] ';
     }
-
-    if ($discount > 0) {
-        $percent = rtrim(rtrim(number_format($discount, 0, ',', ' '), '0'), ',');
-        $badges[] = '<span style="display:inline-block;padding:4px 10px;border-radius:6px;background:#fce4ec;color:#880e4f;font-weight:700;">Promo -' . htmlspecialchars($percent, ENT_QUOTES, 'UTF-8') . '%</span>';
-    }
-
-    if ($stock !== null && $stock <= 0) {
-        $badges[] = '<span style="display:inline-block;padding:4px 10px;border-radius:6px;background:#eeeeee;color:#424242;font-weight:700;">Indisponible</span>';
-    }
-
-    if (!empty($product['featured'])) {
-        $badges[] = '<span style="display:inline-block;padding:4px 10px;border-radius:6px;background:#fff8e1;color:#6d4c41;font-weight:700;">Best-seller</span>';
-    }
-
-    if (empty($badges)) {
-        return '';
-    }
-
-    return '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;">' . implode('', $badges) . '</div>';
+    return $html;
 }
 
-/* Fonctions de validation */
-
-function validateEmail(string $email): bool
+// Validation
+function validateEmail($email)
 {
-    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
-}
-
-function validatePrice(mixed $price): bool
-{
-    if (!is_numeric($price)) {
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return true;
+    } else {
         return false;
     }
-    return (float) $price > 0;
 }
 
-/* Fonction de debug */
-
-function dump_and_die(mixed ...$vars): void
+function validatePrice($prix)
 {
-    $containerStyle = 'background:#1e1e1e;color:#4ec9b0;padding:20px;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;line-height:1.5;white-space:pre-wrap;';
-    $blockStyle = 'background:#111;color:#c3e88d;padding:14px 16px;border-radius:5px;margin:12px 0;';
-
-    echo '<div style="' . htmlspecialchars($containerStyle, ENT_QUOTES, 'UTF-8') . '">';
-
-    foreach ($vars as $i => $var) {
-        $type = gettype($var);
-
-        $meta = '';
-        if (is_string($var)) {
-            $meta .= "Length: " . strlen($var) . "\n";
-        } elseif (is_array($var)) {
-            $meta .= "Count: " . count($var) . "\n";
-        } elseif (is_object($var)) {
-            $meta .= "Class: " . get_class($var) . "\n";
-        }
-
-        if (is_string($var)) {
-            $value = 'Value: "' . $var . '"';
-        } elseif (is_bool($var)) {
-            $value = 'Value: ' . ($var ? 'true' : 'false');
-        } elseif (is_null($var)) {
-            $value = 'Value: null';
-        } else {
-            $value = "Value:\n" . print_r($var, true);
-        }
-
-        $out  = "Var #" . ($i + 1) . "\n";
-        $out .= "Type: " . $type . "\n";
-        $out .= $meta;
-        $out .= $value . "\n";
-
-        echo '<pre style="' . htmlspecialchars($blockStyle, ENT_QUOTES, 'UTF-8') . '">'
-            . htmlspecialchars($out, ENT_QUOTES, 'UTF-8')
-            . '</pre>';
+    if (is_numeric($prix) && $prix >= 0) {
+        return true;
+    } else {
+        return false;
     }
-
-    echo '</div>';
-    die();
 }
+
+// Debug
+function dump_and_die_patate(...$variables)
+{
+    foreach ($variables as $var) {
+        echo '<pre style="background: black; color: lightgreen; padding: 10px;">';
+        var_dump($var);
+        echo '</pre>';
+    }
+    die("FIN DU SCRIPT (Arrêt demandé)");
+}
+
+// MES DONNÉES
+
+$prixBureau = 100.00;
+$monEmail = "theo@test.fr";
+$dateAchat = "2025-01-15";
+
+$monProduit = [
+    'name' => 'Chaise Gamer',
+    'price' => 150.00,
+    'stock' => 5,
+    'is_new' => true,     // Est-ce nouveau ?
+    'on_sale' => true,    // Est-ce en promo ?
+    'discount_percent' => 20
+];
+
+// Un panier (tableau de tableaux)
+$monPanier = [
+    ['price' => 10, 'quantity' => 2],
+    ['price' => 50, 'quantity' => 1]
+];
+
+?>
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ma Page de Test Simple</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        h2 {
+            border-bottom: 2px solid #333;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Bienvenue sur ma page de test PHP</h1>
+
+    <h2>1. Tester les calculs</h2>
+    <ul>
+        <li>Prix de base : <?php echo $prixBureau; ?> €</li>
+        <li>Prix avec TVA (20%) : <strong><?php echo calculateIncludingTax($prixBureau); ?> €</strong></li>
+        <li>Prix Panier Total : <strong><?php echo calculateTotal($monPanier); ?> €</strong></li>
+    </ul>
+
+    <h2>2. Tester le formatage (Dates et Prix)</h2>
+    <ul>
+        <li>Date brute : <?php echo $dateAchat; ?></li>
+        <li>Date jolie : <strong><?php echo formatDate($dateAchat); ?></strong></li>
+        <li>Prix formaté : <strong><?php echo formatPrice(1234.50); ?></strong></li>
+    </ul>
+
+    <h2>3. Tester l'affichage visuel</h2>
+    <p>
+        Produit : <?php echo $monProduit['name']; ?><br>
+        Stock : <?php echo displayStockStatus($monProduit['stock']); ?><br>
+        Badges : <?php echo displayBadges($monProduit); ?>
+    </p>
+
+    <h2>4. Tester la validation</h2>
+    <ul>
+        <li>
+            L'email "theo@test.fr" est-il valide ?
+            <?php
+            if (validateEmail($monEmail)) {
+                echo "OUI";
+            } else {
+                echo "NON";
+            }
+            ?>
+        </li>
+        <li>
+            Le prix "-10" est-il valide ?
+            <?php
+            if (validatePrice(-10)) {
+                echo "OUI";
+            } else {
+                echo "NON (c'est normal)";
+            }
+            ?>
+        </li>
+    </ul>
+
+    <h2>5. Tester le Debug</h2>
+    <p>Attention, ci-dessous j'appelle la fonction <code>dump_and_die</code>.</p>
+    <p>Elle va afficher le contenu de mon produit et arrêter le chargement de la page.</p>
+
+    <hr>
+
+    <?php
+    dump_and_die_patate($monProduit, "Ceci est un test de fin");
+    ?>
+
+    <p>CE TEXTE NE S'AFFICHERA JAMAIS CAR LE SCRIPT EST MORT AVANT.</p>
+    <h2>blablablablablabla</h2>
+    <p>blablablablabla<code>je suis une patate</code>.</p>
+    <p>blablablablablabla</p>
+
+
+</body>
+
+</html>

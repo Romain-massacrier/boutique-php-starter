@@ -2,45 +2,53 @@
 
 require_once __DIR__ . "/helpers.php";
 
-$product = [
-    "name" => "Produit rétro",
-    "priceHT" => 100,
-    "vat" => 20,
-    "discount" => 10,
-    "stock" => 3,
-    "dateAdded" => date("Y-m-d", strtotime("-5 days"))
-];
+$clientName = "Palapin le Magicien";
+$priceHT = 100.0;
+$tva = 20.0;
+$remise = 10.0;
 
-$ttc = calculateIncludingTax($product["priceHT"], $product["vat"]);
-$finalPrice = calculateDiscount($ttc, $product["discount"]);
+$montantTVA = calculateVAT($priceHT, $tva);
+$prixTTC = calculateIncludingTax($priceHT, $tva);
+$prixFinal = calculateDiscount($prixTTC, $remise);
+
+$stock = 3;
+$dateAdded = "2025-12-20";
 ?>
 <!doctype html>
 <html lang="fr">
+
 <head>
     <meta charset="utf-8">
-    <title>Test helpers</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 24px; }
-        .badge { color: #fff; padding: 4px 10px; border-radius: 6px; }
-    </style>
+    <title>Fonctions</title>
 </head>
+
 <body>
 
-    <h1><?= htmlspecialchars($product["name"]) ?></h1>
+    <h1><?php greet(); ?></h1>
+    <p><?php greetClient($clientName); ?></p>
 
-    <p>Prix HT : <?= formatPrice($product["priceHT"]) ?></p>
-    <p>Prix TTC : <?= formatPrice($ttc) ?></p>
-    <p>Prix final : <?= displayPrice($ttc, $product["discount"]) ?></p>
+    <h2>Calculs</h2>
+    <ul>
+        <li>Prix HT : <?= formatPrice($priceHT) ?></li>
+        <li>TVA (<?= $tva ?>%) : <?= formatPrice($montantTVA) ?></li>
+        <li>Prix TTC : <?= formatPrice($prixTTC) ?></li>
+        <li>Remise (<?= $remise ?>%) : <?= formatPrice($prixTTC - $prixFinal) ?></li>
+        <li>Prix final : <strong><?= formatPrice($prixFinal) ?></strong></li>
+    </ul>
 
-    <p>Stock : <?= displayStock($product["stock"]) ?></p>
+    <h2>Check</h2>
+    <ul>
+        <li>En stock ? <?= isInStock($stock) ? "true" : "false" ?></li>
+        <li>En promo ? <?= isOnSale($remise) ? "true" : "false" ?></li>
+        <li>Nouveau ? <?= isNew($dateAdded) ? "true" : "false" ?></li>
+        <li>Commande possible (2) ? <?= canOrder($stock, 2) ? "true" : "false" ?></li>
+    </ul>
 
-    <p>Nouveau :
-        <?= isNew($product["dateAdded"]) ? "oui" : "non" ?>
-    </p>
-
-    <p>Commande possible (2) :
-        <?= canOrder($product["stock"], 2) ? "oui" : "non" ?>
-    </p>
+    <h2>Affichage HTML avec fonctions</h2>
+    <p><?= displayBadge("Promo -{$remise}%", "#8e44ad") ?></p>
+    <p>Prix : <?= displayPrice($prixTTC, $remise) ?></p>
+    <p>Stock : <?= displayStock($stock) ?></p>
 
 </body>
+
 </html>

@@ -1,29 +1,51 @@
 <?php
-//Utilise switch puis réécris avec match
+$status = "canceled";
+
+echo "<h2>Version avec SWITCH</h2>";
+
+$message = "";
+$color = "";
 
 switch ($status) {
-    case 'standby':
-        echo '<span style="color: orange;">Votre commande est en attente de traitement.</span>';
+    case "standby":
+        $message = "⏳ Commande en attente de validation";
+        $color = "orange";
         break;
-    case 'validated':
-        echo '<span style="color: green;">Votre commande a été validé.</span>';
+    case "validated":
+        $message = "✅ Commande validée";
+        $color = "blue";
         break;
-    case 'shipped':
-        echo '<span style="color: blue;">Votre commande a été expédié.</span>';
+    case "shipped":
+        $message = "🚚 Commande expédiée";
+        $color = "purple";
         break;
-    case 'delivered':
-        echo '<span style="color: purple;">Votre commande a été livré.</span>';
+    case "delivered":
+        $message = "🏠 Commande livrée";
+        $color = "green";
         break;
-    case 'canceled':
-        echo '<span style="color: red;">Votre commande a été annulée.</span>';
+    case "canceled":
+        $message = "❌ Commande annulée";
+        $color = "red";
         break;
+    default:
+        $message = "❓ Statut inconnu";
+        $color = "gray";
 }
-echo match ($status) {
-    'standby' => '<span style="color: orange;">Votre commande est en attente de traitement.</span>',
-    'validated' => '<span style="color: green;">Votre commande a été validé.</span>',
-    'shipped' => '<span style="color: blue;">Votre commande a été expédié.</span>',
-    'delivered' => '<span style="color: purple;">Votre commande a été livré.</span>',
-    'canceled' => '<span style="color: red;">Votre commande a été annulée.</span>',
-    default => '<span style="color: gray;">Statut inconnu.</span>',
+
+echo "<span style='color: $color; font-weight: bold; font-size: 1.2rem;'>$message</span>";
+
+echo "<hr>";
+
+echo "<h2>Version avec MATCH (PHP 8+)</h2>";
+
+// Avec match, on retourne directement les données associées au statut
+$result = match ($status) {
+    "standby"   => ["color" => "orange", "msg" => "⏳ Commande en attente de validation"],
+    "validated" => ["color" => "blue",   "msg" => "✅ Commande validée"],
+    "shipped"   => ["color" => "purple", "msg" => "🚚 Commande expédiée"],
+    "delivered" => ["color" => "green",  "msg" => "🏠 Commande livrée"],
+    "canceled"  => ["color" => "red",    "msg" => "❌ Commande annulée"],
+    default     => ["color" => "gray",   "msg" => "❓ Statut inconnu"],
 };
 
+echo "<span style='color: {$result['color']}; font-weight: bold; font-size: 1.2rem;'>{$result['msg']}</span>";

@@ -1,259 +1,340 @@
 <?php
-
+// Enrichissement des données pour l'exercice (ajout de 'new' et 'discount')
 $products = [
     [
-        "name" => "Famicom",
-        "price" => 39.99,
-        "stock" => 12,
-        "new" => true,
-        "discount" => 10,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nintendo-Famicom-Console-Set-FL.png/330px-Nintendo-Famicom-Console-Set-FL.png",
-        "description" => "La console mythique de Nintendo qui a marqué le début du jeu vidéo familial."
-    ],
-    [
-        "name" => "Super Famicom Jr",
-        "price" => 139.99,
-        "stock" => 52,
-        "new" => false,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/e/e3/SuperFamicom_jr.jpg",
-        "description" => "Version compacte de la Super Famicom offrant des classiques 16 bits inoubliables."
-    ],
-    [
-        "name" => "PC Engine",
-        "price" => 99.99,
-        "stock" => 4,
-        "new" => false,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/5/5a/PC_Engine.jpg",
-        "description" => "Console culte au design minimaliste, célèbre pour ses jeux arcade de qualité."
-    ],
-    [
-        "name" => "Neo Geo AES",
-        "price" => 499.99,
+        "name" => "RTX 5090",
+        "price" => 1999.99,
         "stock" => 0,
         "new" => true,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/5/59/Neogeoaes.jpg",
-        "description" => "La console de luxe des années 90, identique aux bornes d’arcade SNK."
+        "discount" => 0,
+        "image" => "https://placehold.co/200x150?text=GPU"
     ],
     [
-        "name" => "Playdia",
-        "price" => 119.99,
-        "stock" => 1,
+        "name" => "Clavier Mécanique",
+        "price" => 149.50,
+        "stock" => 12,
         "new" => false,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Playdia-Console-Set.png/2560px-Playdia-Console-Set.png",
-        "description" => "Console atypique de Bandai orientée jeux interactifs et multimédia."
+        "discount" => 20, // 20%
+        "image" => "https://placehold.co/200x150?text=Clavier"
     ],
     [
-        "name" => "Twin Famicom",
-        "price" => 99.99,
-        "stock" => 9,
-        "new" => true,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Sharp-Twin-Famicom-Console.png/2560px-Sharp-Twin-Famicom-Console.png",
-        "description" => "Console hybride combinant cartouches et disquettes Famicom."
-    ],
-    [
-        "name" => "Megadrive",
-        "price" => 69.99,
-        "stock" => 26,
+        "name" => "Écran 4K OLED",
+        "price" => 899.00,
+        "stock" => 3,
         "new" => false,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Sega-Mega-Drive-EU-Mk1-wController-FL.png/2560px-Sega-Mega-Drive-EU-Mk1-wController-FL.png",
-        "description" => "La console emblématique de SEGA, connue pour sa vitesse et ses jeux d’action."
+        "discount" => 0,
+        "image" => "https://placehold.co/200x150?text=Ecran"
     ],
     [
-        "name" => "Nintendo 64",
-        "price" => 89.99,
-        "stock" => 15,
+        "name" => "Souris Gaming",
+        "price" => 59.90,
+        "stock" => 25,
         "new" => true,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/N64-Console-Set.png/2560px-N64-Console-Set.png",
-        "description" => "Console révolutionnaire qui a popularisé la 3D dans les jeux vidéo."
+        "discount" => 10,
+        "image" => "https://placehold.co/200x150?text=Souris"
+    ],
+    [
+        "name" => "Casque Audio",
+        "price" => 199.99,
+        "stock" => 0,
+        "new" => false,
+        "discount" => 50,
+        "image" => "https://placehold.co/200x150?text=Casque"
+    ],
+    [
+        "name" => "Support Laptop",
+        "price" => 39.99,
+        "stock" => 10,
+        "new" => false,
+        "discount" => 0,
+        "image" => "https://placehold.co/200x150?text=Support"
+    ],
+    [
+        "name" => "Câble HDMI 2.1",
+        "price" => 15.00,
+        "stock" => 100,
+        "new" => false,
+        "discount" => 5,
+        "image" => "https://placehold.co/200x150?text=Cable"
+    ],
+    [
+        "name" => "Webcam 1080p",
+        "price" => 75.50,
+        "stock" => 8,
+        "new" => true,
+        "discount" => 0,
+        "image" => "https://placehold.co/200x150?text=Webcam"
     ],
 ];
 
-// Stats
-$inStock = 0;
-$onSale = 0;
-$outOfStock = 0;
+// Calcul des statistiques
+$stats = [
+    'in_stock' => 0,
+    'on_sale' => 0,
+    'out_of_stock' => 0
+];
 
-foreach ($products as $product) {
-    $discount = (int)($product["discount"] ?? 0);
-    if ($product["stock"] > 0) $inStock++;
-    if ($discount > 0) $onSale++;
-    if ($product["stock"] === 0) $outOfStock++;
+foreach ($products as $p) {
+    if ($p['stock'] > 0) {
+        $stats['in_stock']++;
+    } else {
+        $stats['out_of_stock']++;
+    }
+
+    if ($p['discount'] > 0) {
+        $stats['on_sale']++;
+    }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-<meta charset="UTF-8">
-<title>Catalogue</title>
+    <meta charset="UTF-8">
+    <title>Catalogue Produits Avancé</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
 
-<style>
-body{
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 30px;
-}
+        /* Styles des Statistiques */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
 
-.stats{
-  margin-bottom: 25px;
-  padding: 15px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 1px 6px rgba(0,0,0,.08);
-}
+        .stat-item {
+            text-align: center;
+        }
 
-.grille{
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
 
-.produit{
-  background: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 1px 6px rgba(0,0,0,.08);
-  display: flex;
-  flex-direction: column;
-}
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
 
-.produit h2{
-  margin: 0 0 6px;
-  min-height: 56px;
-}
+        /* Grille */
+        .grille {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
 
-.badges{
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  min-height: 24px;
-  margin-bottom: 10px;
-}
+        /* Carte Produit */
+        .produit {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            position: relative;
+            /* Pour positionner les badges */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-.badge{
-  padding: 4px 8px;
-  font-size: 12px;
-  font-weight: bold;
-  border-radius: 999px;
-  color: #fff;
-}
+        .produit:hover {
+            transform: translateY(-5px);
+        }
 
-.badge.new{ background: #2b9348; }
-.badge.promo{ background: #d90429; }
-.badge.last{ background: #ff9f1c; color: #111; }
+        .image-container {
+            position: relative;
+        }
 
-.produit img{
-  width: 100%;
-  height: 180px;
-  object-fit: contain;
-  margin: 10px 0;
-}
+        .produit img {
+            width: 100%;
+            border-radius: 8px;
+        }
 
-.description{
-  font-size: 13px;
-  color: #444;
-  min-height: 48px;
-}
+        /* Badges */
+        .badges-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
 
-.price-line{
-  margin: 10px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
-.price-old{
-  text-decoration: line-through;
-  color: #888;
-}
+        .bg-new {
+            background-color: #3498db;
+        }
 
-.price-new{
-  color: #d90429;
-  font-size: 18px;
-  font-weight: bold;
-}
+        .bg-promo {
+            background-color: #e74c3c;
+        }
 
-.price{
-  font-size: 16px;
-  font-weight: bold;
-}
+        .bg-last {
+            background-color: #f39c12;
+        }
 
-.en-stock{ color: green; font-weight: bold; }
-.rupture{ color: red; font-weight: bold; }
+        /* Infos */
+        h3 {
+            margin: 15px 0 5px 0;
+            font-size: 1.1em;
+        }
 
-.btn{
-  margin-top: auto;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
+        .prix-container {
+            margin: 10px 0;
+        }
 
-.btn.add{
-  background: #111;
-  color: #fff;
-}
+        .prix {
+            font-weight: bold;
+            font-size: 1.3em;
+            color: #2c3e50;
+        }
 
-.btn.add[disabled]{
-  background: #bbb;
-  cursor: not-allowed;
-}
-</style>
+        .prix-original {
+            text-decoration: line-through;
+            color: #95a5a6;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+
+        /* État Stock */
+        .stock-info {
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .en-stock {
+            color: #27ae60;
+        }
+
+        .rupture-text {
+            color: #c0392b;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Bouton */
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn-active {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .btn-active:hover {
+            background-color: #1a252f;
+        }
+
+        .btn-disabled {
+            background-color: #bdc3c7;
+            color: #ecf0f1;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 
 <body>
+    <h1>Catalogue High-Tech</h1>
 
-<div class="stats">
-  <strong>Stats</strong><br>
-  Produits en stock : <?= $inStock ?><br>
-  Produits en promo : <?= $onSale ?><br>
-  Ruptures : <?= $outOfStock ?>
-</div>
+    <!-- Section Statistiques -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-number"><?= $stats['in_stock'] ?></div>
+            <div class="stat-label">Produits en stock</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number"><?= $stats['on_sale'] ?></div>
+            <div class="stat-label">Promotions en cours</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" style="color: #c0392b;"><?= $stats['out_of_stock'] ?></div>
+            <div class="stat-label">Ruptures de stock</div>
+        </div>
+    </div>
 
-<div class="grille">
-<?php foreach ($products as $product): ?>
-<?php
-$discount = (int)($product["discount"] ?? 0);
-$isNew = $product["new"] ?? false;
-$isPromo = $discount > 0;
-$isLast = $product["stock"] > 0 && $product["stock"] < 5;
-$finalPrice = $isPromo ? $product["price"] * (1 - $discount / 100) : $product["price"];
-?>
-<div class="produit">
-  <h2><?= $product["name"] ?></h2>
+    <div class="grille">
+        <?php foreach ($products as $product): ?>
+            <div class="produit">
+                <div class="image-container">
+                    <img src="<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
 
-  <div class="badges">
-    <?= $isNew ? '<span class="badge new">NOUVEAU</span>' : '' ?>
-    <?= $isPromo ? '<span class="badge promo">PROMO -'.$discount.'%</span>' : '' ?>
-    <?= $isLast ? '<span class="badge last">DERNIERS</span>' : '' ?>
-  </div>
+                    <!-- Badges Conditionnels -->
+                    <div class="badges-container">
+                        <?php if (isset($product['new']) && $product['new'] === true): ?>
+                            <span class="badge bg-new">Nouveau</span>
+                        <?php endif; ?>
 
-  <img src="<?= $product["image"] ?>" alt="<?= htmlspecialchars($product["name"]) ?>">
+                        <?php if (isset($product['discount']) && $product['discount'] > 0): ?>
+                            <span class="badge bg-promo">-<?= $product['discount'] ?>%</span>
+                        <?php endif; ?>
 
-  <p class="description"><?= $product["description"] ?></p>
+                        <?php if ($product['stock'] < 5 && $product['stock'] > 0): ?>
+                            <span class="badge bg-last">Derniers !</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
 
-  <div class="price-line">
-    <?php if ($isPromo): ?>
-      <span class="price-old"><?= number_format($product["price"], 2, ",", " ") ?> €</span>
-      <span class="price-new"><?= number_format($finalPrice, 2, ",", " ") ?> €</span>
-    <?php else: ?>
-      <span class="price"><?= number_format($product["price"], 2, ",", " ") ?> €</span>
-    <?php endif; ?>
-  </div>
+                <h3><?= htmlspecialchars($product['name']) ?></h3>
 
-  <?php if ($product["stock"] > 0): ?>
-    <p class="en-stock">En stock (<?= $product["stock"] ?>)</p>
-  <?php else: ?>
-    <p class="rupture">RUPTURE</p>
-  <?php endif; ?>
+                <div class="prix-container">
+                    <!-- Affichage du prix barré si promo -->
+                    <?php if (isset($product['discount']) && $product['discount'] > 0): ?>
+                        <span class="prix-original"><?= number_format($product['price'], 2, ',', ' ') ?> €</span>
+                        <?php
+                        $newPrice = $product['price'] * (1 - ($product['discount'] / 100));
+                        ?>
+                        <span class="prix" style="color: #e74c3c;"><?= number_format($newPrice, 2, ',', ' ') ?> €</span>
+                    <?php else: ?>
+                        <span class="prix"><?= number_format($product['price'], 2, ',', ' ') ?> €</span>
+                    <?php endif; ?>
+                </div>
 
-  <button class="btn add" <?= $product["stock"] > 0 ? "" : "disabled" ?>>
-    Ajouter au panier
-  </button>
-</div>
-<?php endforeach; ?>
-</div>
+                <div class="stock-info">
+                    <?php if ($product['stock'] === 0): ?>
+                        <p class="rupture-text">Rupture définitive</p>
+                    <?php elseif ($product['stock'] < 5): ?>
+                        <p class="en-stock" style="color: orange;">Stock limité (<?= $product['stock'] ?> restants)</p>
+                    <?php else: ?>
+                        <p class="en-stock">En stock</p>
+                    <?php endif; ?>
+                </div>
 
+                <!-- Bouton Conditionnel -->
+                <?php if ($product['stock'] > 0): ?>
+                    <button class="btn-active">Ajouter au panier</button>
+                <?php else: ?>
+                    <button class="btn-disabled" disabled>Indisponible</button>
+                <?php endif; ?>
+
+            </div>
+        <?php endforeach; ?>
+    </div>
 </body>
+
 </html>

@@ -1,26 +1,27 @@
 <?php
-
-function calculateVAT(float $priceExcludingTax, float $rate): float {
-    return $priceExcludingTax * ($rate / 100);
+function calculateVAT(float $priceExcludingTax, float $rate)
+{
+    return $priceExcludingTax * $rate;
 }
-function calculateIncludingTax(float $priceExcludingTax, float $rate): float {
-    return $priceExcludingTax + calculateVAT($priceExcludingTax, $rate);
+
+function calculateIncludingTax(float $priceExcludingTax, float $rate)
+{
+    return $priceExcludingTax + $rate;
 }
-function calculateDiscount(float $price, float $percentage): float {
-    return $price * (1 - $percentage / 100);
+
+function calculateDiscount(float $price, float $percentage)
+{
+    return $price * $percentage;
 }
-$product = 100.0;
-$vatRate = 20.0;
-$discountPercentage = 10.0;
 
-$vat = calculateVAT($product, $vatRate);
-$ttc = calculateIncludingTax($product, $vatRate);
-$finalPrice = calculateDiscount($ttc, $discountPercentage);
-$discountPercentage = $ttc - $finalPrice;
+$produit = 100;
+$tva = 0.2;
+$remise = 0.9;
 
-echo "Prix HT : " . $product . " €</br>";
-echo "TVA (" . $vatRate . "%) : " . $vat . " €</br>";
-echo "Prix TTC : " . $ttc . " €</br>";
-echo "Prix final après remise de " . $discountPercentage . "% : " . $finalPrice . " €</br>";
-?>
 
+$message = calculateVAT($produit, $tva);
+$message2 = calculateIncludingTax($produit, $message);
+$message3 = calculateDiscount($message2, $remise);
+echo "le montant de la TVA pour" . $produit . "€ est $message €<br>";
+echo "le montant TTC pour" . $produit . "€ est $message2 €<br>";
+echo "le montant apres remise pour" . $message2 . "€ est $message3 €<br>";

@@ -1,65 +1,42 @@
 <?php
 
-// création formulaire de contact avec les champs : nom, email, message
- 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "POST") { // On vérifie juste si le formulaire est envoyé
 
-    // Récupérer les données du formulaire
+    $name = $_POST['name'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $message = $_POST['message'] ?? '';
 
-    $name = $_POST["name"] ?? "";
-    $email = $_POST["email"] ?? "";
-    $message = $_POST["message"] ?? "";
-
-    // Validation tous les chames requis, email, valide, message minimum 10 caractères
-    $errors = [];
+    $errors = []; // Tableau simple pour lister les problèmes
 
     if (empty($name)) {
-        $errors[] = "Le nom est requis.";
+        $errors[] = "Nom requis";
     }
 
-    if (empty($email)) {
-        $errors[] = "L'email est requis.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "L'email n'est pas valide.";
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Email invalide ou requis";
     }
 
-    if (empty($message)) {
-        $errors[] = "Le message est requis.";
-    } elseif (strlen($message) < 10) {
-        $errors[] = "Le message doit contenir au moins 10 caractères.";
+    if (empty($message) || strlen($message) < 10) {
+        $errors[] = "Message trop court (min 10)";
     }
 
-    // Si pas d'erreurs, afficher un message de succès
     if (empty($errors)) {
-        echo "Merci " . htmlspecialchars($name) . ", votre message a été envoyé avec succès.";
+        echo "<h1>Données reçues :</h1>";
+        echo "Nom : " . htmlspecialchars($name) . "<br>";
+        echo "Email : " . htmlspecialchars($email) . "<br>";
+        echo "Message : " . htmlspecialchars($message) . "<br>";
+        exit;         // J'arrête le script ici pour ne pas réafficher le formulaire en dessous
     } else {
-        // Afficher les erreurs
-        foreach ($errors as $error) {
-            echo "<p style='color:red;'>" . htmlspecialchars($error) . "</p>";
+        foreach ($errors as $err) {
+            echo "<p style='color:red'>$err</p>";
         }
-        ?>
-        <form method="POST" action="">
-            <label for="name">Nom :</label><br>
-            <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($name); ?>"><br><br>
-            <label for="email">Email :</label><br>
-            <input type="text" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>"><br><br>
-            <label for="message">Message :</label><br>
-            <textarea id="message" name="message"><?php echo htmlspecialchars($message); ?></textarea><br><br>
-            <input type="submit" value="Envoyer">
-        </form>
-        <?php
     }
-} else {
-    // Afficher le formulaire vide
-    ?>
-    <form method="POST" action="">
-        <label for="name">Nom :</label><br>
-        <input type="text" id="name" name="name"><br><br>
-        <label for="email">Email :</label><br>
-        <input type="text" id="email" name="email"><br><br>
-        <label for="message">Message :</label><br>
-        <textarea id="message" name="message"></textarea><br><br>
-        <input type="submit" value="Envoyer">
-    </form>
-    <?php
-}   
+}
+?>
+
+<form method="POST">
+    Nom : <input type="text" name="name"><br><br>
+    Email : <input type="text" name="email"><br><br>
+    Message : <textarea name="message"></textarea><br><br>
+    <button type="submit">Envoyer</button>
+</form>

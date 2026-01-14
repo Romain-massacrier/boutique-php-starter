@@ -1,92 +1,98 @@
 <?php
 $products = [
     [
-        "name" => "Famicom",
-        "price" => 39.99,
-        "stock" => 12,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Nintendo-Famicom-Console-Set-FL.png/330px-Nintendo-Famicom-Console-Set-FL.png",
-        "description" => "La console mythique de Nintendo qui a marqué le début du jeu vidéo familial."
-    ],
-    [
-        "name" => "Super Famicom Jr",
-        "price" => 139.99,
-        "stock" => 52,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/e/e3/SuperFamicom_jr.jpg",
-        "description" => "Version compacte de la Super Famicom offrant des classiques 16 bits inoubliables."
-    ],
-    [
-        "name" => "PC Engine",
-        "price" => 99.99,
-        "stock" => 4,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/5/5a/PC_Engine.jpg",
-        "description" => "Console culte au design minimaliste, célèbre pour ses jeux arcade de qualité."
-    ],
-    [
-        "name" => "Neo Geo AES",
-        "price" => 499.99,
+        "name" => "RTX 5090",
+        "price" => 1999.99,
         "stock" => 0,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/5/59/Neogeoaes.jpg",
-        "description" => "La console de luxe des années 90, identique aux bornes d’arcade SNK."
+        "image" => "https://placehold.co/200x150?text=GPU"
     ],
     [
-        "name" => "Playdia",
-        "price" => 119.99,
-        "stock" => 1,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Playdia-Console-Set.png/2560px-Playdia-Console-Set.png",
-        "description" => "Console atypique de Bandai orientée jeux interactifs et multimédia."
+        "name" => "Clavier Mécanique",
+        "price" => 149.50,
+        "stock" => 12,
+        "image" => "https://placehold.co/200x150?text=Clavier"
     ],
     [
-        "name" => "Twin Famicom",
-        "price" => 99.99,
-        "stock" => 9,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Sharp-Twin-Famicom-Console.png/2560px-Sharp-Twin-Famicom-Console.png",
-        "description" => "Console hybride combinant cartouches et disquettes Famicom."
+        "name" => "Écran 4K OLED",
+        "price" => 899.00,
+        "stock" => 3,
+        "image" => "https://placehold.co/200x150?text=Ecran"
     ],
     [
-        "name" => "Megadrive",
-        "price" => 69.99,
-        "stock" => 26,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Sega-Mega-Drive-EU-Mk1-wController-FL.png/2560px-Sega-Mega-Drive-EU-Mk1-wController-FL.png",
-        "description" => "La console emblématique de SEGA, connue pour sa vitesse et ses jeux d’action."
+        "name" => "Souris Gaming",
+        "price" => 59.90,
+        "stock" => 25,
+        "image" => "https://placehold.co/200x150?text=Souris"
     ],
     [
-        "name" => "Nintendo 64",
-        "price" => 89.99,
-        "stock" => 15,
-        "image" => "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/N64-Console-Set.png/2560px-N64-Console-Set.png",
-        "description" => "Console révolutionnaire qui a popularisé la 3D dans les jeux vidéo."
+        "name" => "Casque Audio",
+        "price" => 199.99,
+        "stock" => 0,
+        "image" => "https://placehold.co/200x150?text=Casque"
+    ],
+    [
+        "name" => "Support Laptop",
+        "price" => 39.99,
+        "stock" => 10,
+        "image" => "https://placehold.co/200x150?text=Support"
+    ],
+    [
+        "name" => "Câble HDMI 2.1",
+        "price" => 15.00,
+        "stock" => 100,
+        "image" => "https://placehold.co/200x150?text=Cable"
+    ],
+    [
+        "name" => "Webcam 1080p",
+        "price" => 75.50,
+        "stock" => 8,
+        "image" => "https://placehold.co/200x150?text=Webcam"
     ],
 ];
 ?>
-
-
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
+    <meta charset="UTF-8">
+    <title>Catalogue Produits</title>
     <style>
-        .grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .produit { border: 1px solid #ddd; padding: 15px; }
-        .rupture { color: red; }
-        .en-stock { color: green; }
+        body { font-family: sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .grille { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 20px; 
+        }
+        .produit { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .produit img { max-width: 100%; border-radius: 4px; }
+        .prix { font-weight: bold; font-size: 1.2em; margin: 10px 0; }
+        .rupture { color: red; font-weight: bold; }
+        .en-stock { color: green; font-weight: bold; }
     </style>
 </head>
 <body>
+    <h1>Nos Produits</h1>
     <div class="grille">
         <?php foreach ($products as $product): ?>
             <div class="produit">
-                <h2><?= $product["name"] ?></h2>
+                <img src="<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
+                
+                <h3><?= htmlspecialchars($product['name']) ?></h3>
+                
+                <p class="prix">
+                    <?= number_format($product['price'], 2, ',', ' ') ?> €
+                </p>
 
-<img src="<?= $product["image"] ?>" alt="<?= $product["name"] ?>" width="150">
- <p class="description"><?= $product["description"] ?></p>
-
-<p>Prix : <?= number_format($product["price"], 2, ",", " ") ?> €</p>
-
-<?php if ($product["stock"] > 0): ?>
-    <p class="en-stock">En stock (<?= $product["stock"] ?>)</p>
-<?php else: ?>
-    <p class="rupture">Rupture de stock</p>
-<?php endif; ?>
-
+                <?php if ($product['stock'] > 0): ?>
+                    <p class="en-stock">En stock</p>
+                <?php else: ?>
+                    <p class="rupture">Rupture</p>
+                <?php endif; ?>
             </div>
         <?php endforeach; ?>
     </div>

@@ -1,27 +1,17 @@
 <?php
-declare(strict_types=1);
+// config/database.php
 
-// starter-project/config/database.php
-
-function db(): PDO
-{
-    static $pdo = null;
-    if ($pdo instanceof PDO) {
-        return $pdo;
-    }
-
-    $host = "localhost";
-    $db   = "maboutique";
-    $user = "dev";     // ou "root"
-    $pass = "dev";     // ou "" si root sans mdp
-    $charset = "utf8mb4";
-
-    $dsn = "mysql:host={$host};dbname={$db};charset={$charset}";
-
-    $pdo = new PDO($dsn, $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]);
-
-    return $pdo;
+try {
+    $pdo = new PDO(
+        "mysql:host=localhost;dbname=boutique;charset=utf8mb4",
+        "dev", // Votre utilisateur
+        "dev", // Votre mot de passe
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Active les erreurs
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC // Mode tableau associatif par défaut
+        ]
+    );
+} catch (PDOException $e) {
+    die("❌ Erreur de connexion : " . $e->getMessage());
 }
+?>

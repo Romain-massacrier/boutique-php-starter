@@ -2,12 +2,10 @@
 $clothes = ["T-shirt", "Jean", "Pull"];
 $accessories = ["Ceinture", "Montre", "Lunettes"];
 
-$catalog = array_merge($clothes, $accessories);
-
-echo "Nombre total de produits : " . count($catalog) . "<br>";
-
-array_unshift($catalog, "Veste");
+$tableaufusionner = array_merge($clothes, $accessories);
+array_unshift($tableaufusionner, "Veste");
 
 echo "<pre>";
-print_r($catalog);
+print_r($tableaufusionner);
 echo "</pre>";
+echo " Nombre total d'articles : " . count($tableaufusionner);

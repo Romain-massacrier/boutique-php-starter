@@ -1,44 +1,48 @@
 <?php
-
-// tabealu de 10 produits, formulaire get avec champ recherche, filtrer les produits contenant la recherche, afficher les résultats ou aucun résultat
-
 $products = [
-    ["name" => "Ordinateur portable"],
-    ["name" => "Smartphone"],
-    ["name" => "Tablette"],
-    ["name" => "Casque audio"],
-    ["name" => "Montre connectée"],
-    ["name" => "Clé USB"],
-    ["name" => "Imprimante"],
-    ["name" => "Souris sans fil"],
-    ["name" => "Clavier mécanique"],
-    ["name" => "Écran 4K"],
+    ["name" => "T-shirt blanc", "price" => 15],
+    ["name" => "Jean bleu", "price" => 50],
+    ["name" => "Baskets noires", "price" => 80],
+    ["name" => "Casquette rouge", "price" => 20],
+    ["name" => "Sac à dos", "price" => 45],
+    ["name" => "Écharpe laine", "price" => 25],
+    ["name" => "Montre sport", "price" => 120],
+    ["name" => "Lunettes soleil", "price" => 90],
+    ["name" => "Ceinture cuir", "price" => 35],
+    ["name" => "Chaussettes", "price" => 8]
 ];
-$search = $_GET["search"] ?? "";
+
+$search = $_GET['search'] ?? '';
 $results = [];
-if ($search !== "") {
-    foreach ($products as $product) {
-        if (stripos($product["name"], $search) !== false) {
-            $results[] = $product;
+$resultsprice = [];
+
+if ($search) {
+    foreach ($products as $product1) {
+        // !== false permet de ne pas confondre la position 0 (début du mot) avec false (pas trouvé).
+        if (stripos($product1["name"], $search) !== false) {
+            $results[] = $product1;
         }
     }
+} else {
+    $results = $products;     // ici j'affiche tout les produits de mon tableau par défaut, un peu comme un catalogue
 }
 ?>
-<form method="GET" action="">
-    <label for="search">Rechercher un produit :</label><br>
-    <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search); ?>"><br><br>
-    <input type="submit" value="Rechercher">
+<form method="GET">
+    Recherche : <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>">
+    <button type="submit">Rechercher</button>
 </form>
-<?php
-if ($search !== "") {
-    if (count($results) > 0) {
-        echo "<h2>Résultats de la recherche :</h2>";
-        echo "<ul>";
-        foreach ($results as $product) {
-            echo "<li>" . htmlspecialchars($product["name"]) . "</li>";
-        }
-        echo "</ul>";
-    } else {
-        echo "<p>Aucun produit trouvé pour la recherche \"" . htmlspecialchars($search) . "\".</p>";
-    }
-}
+
+<hr>
+
+<?php if (empty($results)): ?>
+    <p>Aucun résultat.</p>
+<?php else: ?>
+    <ul>
+        <?php foreach ($results as $item): ?>
+            <li>
+                <?php echo htmlspecialchars($item['name']); ?>
+                - <?php echo $item['price']; ?> €
+            </li>
+        <?php endforeach; ?>
+    </ul>
+<?php endif; ?>

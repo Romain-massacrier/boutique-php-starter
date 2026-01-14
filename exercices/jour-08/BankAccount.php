@@ -1,49 +1,41 @@
 <?php
-declare(strict_types=1);
+class BankAccount {
+    private $balance;
 
-class BankAccount
-{
-    private float $balance;
-
-    public function __construct(float $initialBalance = 0)
-    {
-        if ($initialBalance < 0) {
-            throw new InvalidArgumentException("Le solde initial ne peut pas être négatif.");
-        }
-
-        $this->balance = $initialBalance;
+    public function __construct() {
+        $this->balance = 0;
     }
 
-    public function deposit(float $amount): void
-    {
+    public function deposit($amount) {
         if ($amount <= 0) {
-            throw new InvalidArgumentException("Le montant du dépôt doit être supérieur à 0.");
+            echo "Erreur : le montant doit être positif.\n";
+            return;
         }
-
-        $this->balance += $amount;
+        $this->balance = $this->balance + $amount;
+        echo "Dépôt de $amount effectué.\n";
     }
 
-    public function withdraw(float $amount): void
-    {
+    public function withdraw($amount) {
         if ($amount <= 0) {
-            throw new InvalidArgumentException("Le montant du retrait doit être supérieur à 0.");
+            echo "Erreur : le montant doit être positif.\n";
+            return;
         }
-
         if ($amount > $this->balance) {
-            throw new RuntimeException("Solde insuffisant.");
+            echo "Erreur : solde insuffisant.\n";
+            return;
         }
-
-        $this->balance -= $amount;
+        $this->balance = $this->balance - $amount;
+        echo "Retrait de $amount effectué.\n";
     }
 
-    public function getBalance(): float
-    {
+    public function getBalance() {
         return $this->balance;
     }
 }
 
-$account = new BankAccount(100);
-$account -> deposit(50);
-$account ->withdraw(70);
-
-echo $account->getBalance();
+$compte = new BankAccount();
+$compte->deposit(100);
+$compte->withdraw(30);
+echo "Solde actuel : " . $compte->getBalance() . "\n";
+$compte->withdraw(80); // Cette opération ne fonctionne pas ( volontairement )
+?>

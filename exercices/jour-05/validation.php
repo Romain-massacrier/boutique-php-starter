@@ -1,31 +1,42 @@
 <?php
 
-function isInStock(int $stock): bool {
+// true si stock > 0
+function isInStock(int $stock): bool
+{
     return $stock > 0;
 }
 
-function isOnSale(float $discount): bool {
+// true si discount > 0
+function isOnSale(float $discount): bool
+{
     return $discount > 0;
 }
 
-function isNew(string $dateAdded): bool {
-    $dateAdded = new DateTime($dateAdded);
-    $dateLimit = (new DateTime())->modify('-30 days');
-
-    return $dateAdded >= $dateLimit;
+// true si ajouté il y a moins de 30 jours
+function isNew(string $dateAdded): bool
+{
+    $daysSince = (time() - strtotime($dateAdded)) / 86400;
+    echo "<br>$daysSince<br>";
+    return $daysSince < 30 && $daysSince >= 0;
 }
 
-function canOrder(int $stock, int $quantity): bool {
-    return $quantity > 0 && $quantity <= $stock;
+// true si stock >= quantity
+function canOrder(int $stock, int $quantity): bool
+{
+    return $stock >= $quantity;
 }
-$dateAdded = "2027-12-01";
-$daysSince = (time() - strtotime($dateAdded)) / 86400;
 
-echo isInStock(1) ? "En stock" : "Rupture de stock";
-echo "</br>";
-echo isOnSale(15.5) ? "En promotion" : "Prix normal";
-echo "</br>";
-echo isNew($dateAdded) ? "Nouveau produit" : "Produit ancien";
-echo "</br>";
-echo canOrder(5, 3) ? "Commande possible" : "Quantité non disponible";
-?>
+echo "isInStock(0) = "  . (isInStock(0)  ? "true" : "false") . "<br>";
+echo "isInStock(1) = "  . (isInStock(1)  ? "true" : "false") . "<br>";
+echo "isInStock(10) = " . (isInStock(10) ? "true" : "false") . "<br>";
+
+echo "isOnSale(0) = "    . (isOnSale(0)    ? "true" : "false") . "<br>";
+echo "isOnSale(5) = "    . (isOnSale(5)    ? "true" : "false") . "<br>";
+echo "isOnSale(20.5) = " . (isOnSale(20.5) ? "true" : "false") . "<br>";
+
+echo "isNew(2024-01-15) = " . (isNew("2026-01-08") ? "true" : "false") . "<br>";
+echo "isNew(today) = "      . (isNew(date("Y-m-d")) ? "true" : "false") . "<br>";
+
+echo "canOrder(3,1) = " . (canOrder(3, 1) ? "true" : "false") . "<br>";
+echo "canOrder(3,3) = " . (canOrder(3, 3) ? "true" : "false") . "<br>";
+echo "canOrder(3,4) = " . (canOrder(3, 4) ? "true" : "false") . "<br>";

@@ -2,34 +2,30 @@
 
 class Category
 {
-    public int $id;
-    public string $name;
-    public string $description;
+    public $id;
+    public $nom;
+    public $description;
 
-    public function __construct(int $id, string $name, string $description)
+    public function __construct($id, $nom, $description)
     {
         $this->id = $id;
-        $this->name = $name;
+        $this->nom = $nom;
         $this->description = $description;
     }
 
-    public function getSlug(): string
+    public function getSlug()
     {
-        return strtolower(str_replace(" ", "-", $this->name));
+        return strtolower(str_replace(" ", "-", $this->nom));
     }
 }
 
-echo "<h2>Test des catégories</h2>";
-
-$cat1 = new Category(1, "Figurines Warhammer", "Toutes les figurines de l'Imperium et du Chaos");
-$cat2 = new Category(2, "Véhicules Eldar", "Véhicules rapides et technologiques");
-$cat3 = new Category(3, "Monstres Tyranides", "Créatures biologiques de la ruche");
-
-$categories = [$cat1, $cat2, $cat3];
+$categories = [
+    new Category(1, "Électronique Grand Public", "Produits électroniques pour la maison"),
+    new Category(2, "Accessoires Informatiques", "Souris, claviers, câbles et accessoires"),
+    new Category(3, "Périphériques Audio Vidéo", "Casques, haut-parleurs et moniteurs")
+];
 
 foreach ($categories as $cat) {
-    echo "Nom: " . $cat->name . "<br>";
-    echo "Slug: " . $cat->getSlug() . "<br>";
-    echo "Description: " . $cat->description . "<br>";
-    echo "<hr>";
+    echo "<br>";
+    echo "<br>ID: {$cat->id} | Nom: {$cat->nom} | Slug: {$cat->getSlug()}";
 }

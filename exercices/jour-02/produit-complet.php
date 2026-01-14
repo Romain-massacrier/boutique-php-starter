@@ -1,23 +1,29 @@
 <?php
+
 $product = [
-    "name" => "Casque Titus Warhammer 40k",
-    "description" => "Enfile le casque de Titus des Ultra Marines et ressent la volonté de l'Empereur",
-    "images" => ["https://www.france-figurines.fr/118020-medium_default/replique-casque-ultramarines-lieutenant-titus-warhammer-40000-space-marine-2-joy-toy.jpg", "https://www.france-figurines.fr/118019-medium_default/replique-casque-ultramarines-lieutenant-titus-warhammer-40000-space-marine-2-joy-toy.jpg", "https://www.france-figurines.fr/118023-medium_default/replique-casque-ultramarines-lieutenant-titus-warhammer-40000-space-marine-2-joy-toy.jpg"],
+    "name" => "T-shirt",
+    "description" => "T-shirt en coton",
+    "price" => 29.99,
+
+    "images" => [
+        "https://parcsaintecroix.com/wp-content/uploads/2024/06/cp-e-wittwer-6-2-500x500-ad0950baee13.png",
+        "https://parcsaintecroix.com/wp-content/uploads/2022/09/IMG_8245-bao-scaled-500x500-ad0950baee13.jpg",
+        "https://www.lepal.com/uploads/media/default/0001/19/27b2fb71e5f6493f427da6ff7af09f1c34e215a4.jpg",
+    ],
+
     "sizes" => ["S", "M", "L", "XL"],
-    "price" => 209.99,
+
     "reviews" => [
-        ["author" => "Ayoub", "rating" => 5, "comment" => "J'ai l'impression que la puissance coule en moi"],
-        ["author" => "Dylan", "rating" => 5, "comment" => "La classe à Dallas"],
-    ]
+        ["author" => "Ayoub", "rating" => 5, "comment" => "Très bon produit"],
+        ["author" => "CapitainCSS", "rating" => 4, "comment" => "Bonne qualité"],
+    ],
 ];
 
-// Affiche la 2eme image
-echo '<p>2eme image :</p>';
-echo '<img src="' . $product["images"][1] . '" alt="Casque Titus" width="300">';
+echo '<img src="' . $product["images"][1] . '" alt="Deuxième image" width="250">';
+echo "<br>";
 
+echo "Nombre de tailles : " . count($product["sizes"]);
+echo "<br>";
 
-// Affiche Le nombre de tailles disponibles, "count compte le nombre d’éléments dans un tableau"
-echo "Taille disponible : " . count($product["sizes"]) . "<br>";
-
-// Affiche La note du premier avis
-echo "Note du 1er avis : " . $product["reviews"][0]["rating"] . "<br>";
+echo "Note du premier avis : " . $product["reviews"][0]["rating"];
+echo "<br>";

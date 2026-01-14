@@ -1,24 +1,20 @@
 <?php
-
 $products = [
-    1 => ["name" => "Ordinateur portable", "price" => 799.99],
-    2 => ["name" => "Smartphone", "price" => 499.99],
-    3 => ["name" => "Tablette", "price" => 299.99],
-    4 => ["name" => "Casque audio", "price" => 99.99],
-    5 => ["name" => "Montre connectée", "price" => 199.99],
+    1 => ["name" => "T-shirt", "price" => 29.99],
+    2 => ["name" => "Jean", "price" => 79.99],
+    3 => ["name" => "Baskets", "price" => 89.90],
+    4 => ["name" => "Casquette", "price" => 15.00],
+    5 => ["name" => "Sac à dos", "price" => 45.50]
 ];
-
-// Récupérer le paramètre "id" depuis l'URL
 
 $id = $_GET["id"] ?? null;
 
-// affiche le produit correspondant ou "produit non trouvé"
-
-if ($id !== null && isset($products[$id])) {
+if ($id && array_key_exists($id, $products)) {
     $product = $products[$id];
-    echo "Produit : " . htmlspecialchars($product["name"]) . "<br>";
-    echo "Prix : " . number_format($product["price"], 2) . " €";
+    echo "<h1>Produit : " . htmlspecialchars($product['name']) . "</h1>";
+    echo "<p>Prix : " . htmlspecialchars($product['price']) . " €</p>";
 } else {
-    echo "Produit non trouvé.";
+    echo "<h1>Produit non trouvé</h1>";
 }
 
+// je test avec http://localhost:8000/exercices/jour-06/produit.php?id=4 pour voir l'ID 4 donc la casquette

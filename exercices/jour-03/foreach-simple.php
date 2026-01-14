@@ -1,46 +1,24 @@
 <?php
-// Tableau contenant la liste de prénoms
-$firstNames = [
-    "Pierre",
-    "Loic",
-    "Stephane",
-    "Julie",
-    "Abigaelle"
-];
-
-// Compteur pour numéroter les éléments du tableau
+$firstnames = ["Romain", "Roman", "Romane", "Roumane", "Ronin"];
 $i = 1;
 ?>
+<!doctype html>
+<html lang="fr">
 
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foreach simple</title>
+    <meta charset="utf-8">
+    <title>Catalogue</title>
 </head>
+
 <body>
 
-<ul>
-    <?php
-    // Boucle foreach, qui parcourt les éléments du tableau $firstNames
-    // a chaque tour, la valeur se trouve stocké dans $name
-    foreach ($firstNames as $name):
-    ?>
-        <li>
-            <!-- Affiche le numéro puis le prénom -->
-            <?= $i ?> <?= $name ?>
-        </li>
+    <ul>
+        <?php foreach ($firstnames as $firstname): ?>
+            <li><?= $i . '. ' . htmlspecialchars($firstname) ?></li>
+            <?php $i++; ?>
+        <?php endforeach; ?>
+    </ul>
 
-        <?php
-        // Incrémente le compteur après chaque prénom
-        $i++;
-        ?>
-    <?php
-    // Fin de la boucle foreach
-    endforeach;
-    ?>
-</ul>
-    
 </body>
+
 </html>

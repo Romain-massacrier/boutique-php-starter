@@ -1,62 +1,104 @@
 <?php
 
-function formatPrice(float $price): string
+declare(strict_types=1);
+
+/*
+Greetings
+*/
+function greet(): void
 {
-    return number_format($price, 2, ",", " ") . " €";
+    echo "Bienvenue sur la boutique !";
 }
 
-function calculateIncludingTax(float $priceHT, float $vatPercent): float
+function greetClient(string $name): void
 {
-    return $priceHT * (1 + ($vatPercent / 100));
+    echo "Bonjour " . htmlspecialchars($name) . " !";
 }
 
-function calculateDiscount(float $price, float $discountPercent): float
+/*
+Calculs (return)
+*/
+function calculateVAT(float $priceExcludingTax, float $rate): float
 {
-    return $price * (1 - ($discountPercent / 100));
+    return $priceExcludingTax * ($rate / 100);
 }
 
-function displayBadges(array $product): string
+function calculateIncludingTax(float $priceExcludingTax, float $rate): float
 {
-    $isNew = !empty($product["new"]);
-    $discount = (float)($product["discount"] ?? 0);
+    return $priceExcludingTax + calculateVAT($priceExcludingTax, $rate);
+}
 
-    $html = "";
 
-    if ($isNew) {
-        $html .= '<span class="badge badge-new">NOUVEAU</span> ';
-    }
+function formatPrice(float $price, string $currency = "€"): string
+{
+    return number_format($price, 2, ',', ' ') . ' ' . $currency;
+}
+
+function calculateDiscount(float $price, float $discount): float
+{
+    return $price * (1 - $discount / 100);
+}
+
+
+/*
+Check
+*/
+function isInStock(int $stock): bool
+{
+    return $stock > 0;
+}
+
+function isOnSale(float $discount): bool
+{
+    return $discount > 0;
+}
+
+function isNew(string $dateAdded, int $days = 30): bool
+{
+    $daysSince = (time() - strtotime($dateAdded)) / 86400;
+    return $daysSince < $days;
+}
+
+function canOrder(int $stock, int $quantity): bool
+{
+    return $stock >= $quantity;
+}
+
+/* 
+Affichage HTML
+*/
+function displayBadge(string $text, string $color): string
+{
+    return '<span class="badge" style="background:' . htmlspecialchars($color) . ';">'
+        . htmlspecialchars($text)
+        . '</span>';
+}
+
+function displayPrice(float $price, float $discount = 0, string $currency = "€"): string
+{
+    $formattedPrice = formatPrice($price, $currency, 2);
 
     if ($discount > 0) {
-        $html .= '<span class="badge badge-sale">PROMO -' . (int)$discount . '%</span> ';
+        $newPrice = calculateDiscount($price, $discount);
+        $formattedNew = formatPrice($newPrice, $currency, 2);
+
+        return '<span style="text-decoration: line-through; color:#6c757d;">' . $formattedPrice . '</span> '
+            . '<strong style="color:#e74c3c;">' . $formattedNew . '</strong>';
     }
 
-    return trim($html);
+    return '<strong>' . $formattedPrice . '</strong>';
 }
 
-function displayPriceTTC(float $priceHT, float $vatPercent, float $discountPercent = 0): string
+
+function displayStock(int $quantity): string
 {
-    $ttc = calculateIncludingTax($priceHT, $vatPercent);
-
-    if ($discountPercent > 0) {
-        $final = calculateDiscount($ttc, $discountPercent);
-
-        return
-            '<span class="price-old">' . htmlspecialchars(formatPrice($ttc)) . '</span> ' .
-            '<span class="price-new">' . htmlspecialchars(formatPrice($final)) . '</span>';
+    if ($quantity <= 0) {
+        return '<span style="color:#e74c3c;">Rupture de stock</span>';
     }
 
-    return '<span class="price">' . htmlspecialchars(formatPrice($ttc)) . '</span>';
-}
-
-function displayStockStatus(int $stock): string
-{
-    if ($stock <= 0) {
-        return '<div class="stock rupture">Rupture de stock</div>';
+    if ($quantity <= 5) {
+        return '<span style="color:#f39c12;">Stock faible (' . $quantity . ')</span>';
     }
 
-    if ($stock <= 5) {
-        return '<div class="stock faible">Stock faible (' . (int)$stock . ')</div>';
-    }
-
-    return '<div class="stock en-stock">En stock (' . (int)$stock . ')</div>';
+    return '<span style="color:#27ae60;">En stock (' . $quantity . ')</span>';
 }

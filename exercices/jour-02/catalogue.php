@@ -6,16 +6,6 @@ $products = [
         "stock" => 50
     ],
     [
-        "name" => "Polo",
-        "price" => 19.99,
-        "stock" => 50
-    ],
-    [
-        "name" => "Slip",
-        "price" => 49.99,
-        "stock" => 50
-    ],
-    [
         "name" => "Jean",
         "price" => 79.99,
         "stock" => 30
@@ -24,19 +14,26 @@ $products = [
         "name" => "Casquette",
         "price" => 19.99,
         "stock" => 100
+    ],
+    [
+        "name" => "Pikachu",
+        "price" => 1.99,
+        "stock" => 1
+    ],
+    [
+        "name" => "Pull",
+        "price" => 39.99,
+        "stock" => 34
     ]
 ];
 
-// Nom du 3ème produit
-echo "Nom du 3ème produit : " . $products[2]["name"] . "<br>";
+echo " 3ieme name : " . $products[2]["name"];
+echo "<br>";
+echo " 1ieme prix : " . $products[0]["price"];
+echo "<br>";
+echo " stock de mon dernier article : " . $products[4]["stock"];
+echo "<br>";
 
-// Prix du 1er produit
-echo "Prix du 1er produit : " . $products[0]["price"] . " €<br>";
-
-// Stock du dernier produit
-echo "Stock du dernier produit : " . $products[4]["stock"] . "<br>";
-
-// Modifier le stock du 2ème produit
 $products[1]["stock"] += 10;
 
-echo "Nouveau stock du 2ème produit : " . $products[1]["stock"];
+echo "Stock du 2ème produit : " . $products[1]["stock"];

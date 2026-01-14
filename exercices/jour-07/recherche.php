@@ -1,180 +1,108 @@
 <?php
-declare(strict_types=1);
-
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
-
 try {
     $pdo = new PDO(
         "mysql:host=localhost;dbname=boutique;charset=utf8mb4",
-        "dev",     // ou "root"
-        "dev",     // ou ""
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+        "dev",
+        "dev",
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION] 
     );
-
-    $search = $_GET["search"] ?? "";
-    $search = trim($search);
-
-    $results = [];
-
-    if ($search !== "") {
-        $sql = "SELECT * FROM products WHERE name LIKE ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute(["%" . $search . "%"]);
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
 } catch (PDOException $e) {
-    die("Erreur BDD : " . $e->getMessage());
+    die("Erreur de connexion : " . $e->getMessage());
 }
 
-function e(string $value): string {
-    return htmlspecialchars($value, ENT_QUOTES, "UTF-8");
+$search = $_GET['q'] ?? ''; 
+
+$products = []; // tableau vide pour les résultats
+
+if ($search !== '') {
+    
+    // On utilise prepare() au lieu de query() car on va utiliser une variable utilisateur ($search)
+    // Le '?' sert de place réservée (placeholder)
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE ?"); 
+    
+    // On exécute la requête en "injectant" la vraie valeur à la place du '?'
+    // Les % sont pour dire "qui contient ce mot" (avant ou après)
+    $stmt->execute(['%' . $search . '%']);
+    
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);      // On récupère tous les résultats
 }
 ?>
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <title>Recherche produits</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <style>
-    .hero {
-      background: linear-gradient(135deg, rgba(13,110,253,.12), rgba(108,117,125,.10));
-      border: 1px solid rgba(0,0,0,.08);
-    }
-    .price {
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: .2px;
-    }
-    .card-hover {
-      transition: transform .12s ease, box-shadow .12s ease;
-    }
-    .card-hover:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 .5rem 1.25rem rgba(0,0,0,.10);
-    }
-    .muted-small { font-size: .9rem; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Recherche Produit</title>
 </head>
+<body>
 
-<body class="bg-light">
+    <h1>Rechercher un produit</h1>
 
-<div class="container py-4 py-md-5">
-
-  <!-- Bandeau -->
-  <div class="hero rounded-4 p-4 p-md-5 mb-4">
-    <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between gap-3">
-      <div>
-        <h1 class="mb-1">Recherche de produits</h1>
-        <p class="mb-0 text-secondary">Tape un nom (ex: <span class="fw-semibold">Jean</span>, <span class="fw-semibold">Sac</span>, <span class="fw-semibold">T-shirt</span>).</p>
-      </div>
-
-      <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-outline-secondary" href="recherche.php">Réinitialiser</a>
-        <a class="btn btn-primary" href="liste-produits.php">Voir tout</a>
-      </div>
-    </div>
-
-    <!-- Formulaire de recherche -->
-    <form class="mt-4" method="get">
-      <div class="row g-2 align-items-center">
-        <div class="col-12 col-md-8 col-lg-6">
-          <div class="input-group input-group-lg">
-            <span class="input-group-text">🔎</span>
-            <input
-              type="text"
-              class="form-control"
-              name="search"
-              placeholder="Nom du produit"
-              value="<?= e($search) ?>"
-            >
-          </div>
-        </div>
-        <div class="col-12 col-md-auto">
-          <button class="btn btn-lg btn-success" type="submit">Rechercher</button>
-        </div>
-
-        <?php if ($search !== ""): ?>
-          <div class="col-12">
-            <div class="mt-2 text-secondary">
-              Résultats pour : <span class="fw-semibold">"<?= e($search) ?>"</span>
-              <span class="badge text-bg-dark ms-2">
-                <?= count($results) ?> trouvé<?= count($results) > 1 ? "s" : "" ?>
-              </span>
-            </div>
-          </div>
-        <?php endif; ?>
-      </div>
+    <!-- Le formulaire envoie les données dans l'URL (méthode GET) -->
+    <form action="" method="GET">
+        <label for="search">Nom du produit :</label>
+        <!-- On remet la valeur cherchée dans l'input pour que l'utilisateur voie ce qu'il a tapé -->
+        <input type="text" id="search" name="q" placeholder="Ex: T-shirt" value="<?= htmlspecialchars($search) ?>">
+        <button type="submit">Rechercher</button>
     </form>
-  </div>
 
-  <!-- Contenu -->
-  <?php if ($search === ""): ?>
+    <hr>
 
-    <div class="alert alert-info">
-      Commence par taper un mot clé dans la barre de recherche.
-    </div>
-
-  <?php else: ?>
-
-    <?php if (count($results) === 0): ?>
-      <div class="alert alert-warning d-flex align-items-center" role="alert">
-        <div class="me-2">⚠️</div>
-        <div>Aucun produit trouvé.</div>
-      </div>
+    <!-- Affichage des résultats -->
+    <?php if ($search === ''): ?>
+        <p>Veuillez entrer un mot-clé pour commencer la recherche.</p>
+        
+    <?php elseif (empty($products)): ?>
+        <p style="color: red;">Aucun produit trouvé pour "<?= htmlspecialchars($search) ?>".</p>
+        
     <?php else: ?>
-
-      <div class="row g-3 g-md-4">
-        <?php foreach ($results as $product): ?>
-          <?php
-            $stock = (int)$product["stock"];
-            $stockLabel = $stock <= 0 ? "Rupture" : ($stock <= 10 ? "Stock faible" : "En stock");
-            $stockClass = $stock <= 0 ? "text-bg-danger" : ($stock <= 10 ? "text-bg-warning" : "text-bg-success");
-          ?>
-          <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-            <div class="card h-100 card-hover shadow-sm">
-              <div class="card-body d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                  <h5 class="card-title mb-1"><?= e($product["name"]) ?></h5>
-                  <span class="badge <?= $stockClass ?>"><?= $stockLabel ?></span>
-                </div>
-
-                <div class="text-secondary muted-small mb-3">
-                  Stock: <span class="fw-semibold"><?= $stock ?></span>
-                </div>
-
-                <div class="mt-auto d-flex justify-content-between align-items-center">
-                  <div class="price">
-                    <?= number_format((float)$product["price"], 2, ",", " ") ?> €
-                  </div>
-
-                  <button class="btn btn-outline-primary btn-sm" type="button" disabled
-                          title="Bouton déco pour l'exercice">
-                    Ajouter
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        <?php endforeach; ?>
-      </div>
-
+        <h2>Résultats de la recherche :</h2>
+        <table border="1" cellpadding="10" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($products as $product): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($product['name']) ?></td>
+                        <td><?= htmlspecialchars($product['price']) ?> €</td>
+                        <td><?= htmlspecialchars($product['stock']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     <?php endif; ?>
 
-  <?php endif; ?>
+    <br><br>
+    
+    <!--EXPLICATION -->
+    <div style="background-color: #f4f4f4; padding: 20px; border: 1px solid #ccc;">
+        <h3>🔒 Sécurité : Pourquoi utiliser prepare() + execute() ?</h3>
+        
+        <p><strong>Le problème de la concaténation (À NE PAS FAIRE) :</strong></p>
+        <code style="background: #ffdddd; display: block; padding: 5px;">
+            $sql = "SELECT * FROM products WHERE name LIKE '%" . $_GET["q"] . "%'";<br>
+            $stmt = $pdo->query($sql);
+        </code>
+        <p>Si je fais ça, je laisse l'utilisateur écrire directement dans mon code SQL. S'il tape <code>%' OR 1=1 --</code>, il peut voler toutes mes données. C'est ce qu'on appelle une <strong>Injection SQL</strong>.</p>
 
-  <footer class="text-center text-secondary mt-5 small">
-    Jour 07 PDO - Recherche produits
-  </footer>
+        <p><strong>La solution sécurisée (Ce qu'on a fait) :</strong></p>
+        <code style="background: #ddffdd; display: block; padding: 5px;">
+            $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE ?");<br>
+            $stmt->execute(['%' . $search . '%']);
+        </code>
+        <p><strong>Avantages :</strong></p>
+        <ul>
+            <li>Le <code>?</code> est une case vide protégée.</li>
+            <li>Les données (le mot cherché) et le code SQL sont envoyés séparément.</li>
+            <li>PDO "désactive" automatiquement tout code malveillant qui serait dans la variable.</li>
+        </ul>
+        <p><strong>En résumé :</strong> Concaténer = Danger. Préparer = Sécurité.</p>
+    </div>
 
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

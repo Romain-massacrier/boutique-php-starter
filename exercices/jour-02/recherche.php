@@ -1,20 +1,12 @@
 <?php
-$categories = ["Vêtements", "Chaussures", "Accesoires", "Sport"];
 
-// in_array vérifie si une valeur existe dans un tableau
+$categories = ["Vêtements", "Chaussures", "Accessoires", "Sport"];
 
-if (in_array("Chaussures", $categories)) {
-    echo "Chaussures : Trouvé !<br>";
-    } else {
-        echo "Chaussures : Non trouvé<br>";
-    }
+echo in_array("Chaussures", $categories) ? "Trouvé !" : "Non trouvé";
+echo "<br>";
 
-    if (in_array("Electronique", $categories)) {
-    echo "Electronique : Trouvé !<br>";
-    } else {
-        echo "Electronique : Non trouvé<br>";
-    }
+echo in_array("Électronique", $categories) ? "Trouvé !" : "Non trouvé";
+echo "<br>";
 
-    $indexSport = array_search("Sport", $categories);
-
-    echo "Index de sport : " . $indexSport;
+$indexSport = array_search("Sport", $categories);
+echo ($indexSport !== false) ? "Index de Sport : " . $indexSport : "Sport non trouvé";

@@ -1,35 +1,29 @@
 <?php
-// Tableau de 10 produits avec des stocks variés
 $products = [
-    ["name" => "Clavier", "price" => 49.99, "stock" => 12],
-    ["name" => "Souris", "price" => 19.99, "stock" => 0],
-    ["name" => "Ecran 24 pouces", "price" => 99.99, "stock" => 5],
-    ["name" => "Casque audio", "price" => 79.90, "stock" => 8],
-    ["name" => "Webcam", "price" => 59.00, "stock" => 0],
-    ["name" => "Micro USB", "price" => 89.90, "stock" => 3],
-    ["name" => "Chaise gamer", "price" => 149.99, "stock" => 4], // > 100 € → stop
-    ["name" => "Tapis de souris", "price" => 9.99, "stock" => 25],
-    ["name" => "Cle USB", "price" => 14.99, "stock" => 0],
-    ["name" => "Support ecran", "price" => 39.99, "stock" => 6],
+    ["name" => "Pomme",      "price" => 0.60,  "stock" => 12],
+    ["name" => "Banane",     "price" => 0.80,  "stock" => 0],
+    ["name" => "Chocolat",   "price" => 2.50,  "stock" => 7],
+    ["name" => "Cerise",     "price" => 3.90,  "stock" => 0],
+    ["name" => "Lait",       "price" => 1.20,  "stock" => 5],
+    ["name" => "Café",       "price" => 6.50,  "stock" => 3],
+    ["name" => "RTX 5080",   "price" => 1299,  "stock" => 2],
+    ["name" => "Pâtes",      "price" => 1.10,  "stock" => 9],
+    ["name" => "Fromage",    "price" => 4.30,  "stock" => 2],
+    ["name" => "Casque",     "price" => 89.99, "stock" => 1],
 ];
 
-// Parcours des produits
 foreach ($products as $product) {
 
-    // Si le stock est à 0, on saute ce produit
     if ($product["stock"] === 0) {
         continue;
     }
 
-    // Si le prix est supérieur à 100 €, on arrête la boucle
     if ($product["price"] > 100) {
         break;
     }
 
-    // Affichage uniquement des produits en stock et < 100 €
-    echo "<p>";
-    echo "<strong>" . $product["name"] . "</strong><br>";
-    echo "Prix : " . $product["price"] . " €<br>";
-    echo "Stock : " . $product["stock"];
-    echo "</p>";
+    echo htmlspecialchars($product["name"]) .
+        " - prix " . htmlspecialchars((string)$product["price"]) . " €" .
+        " - stock " . htmlspecialchars((string)$product["stock"]) .
+        "<br>";
 }

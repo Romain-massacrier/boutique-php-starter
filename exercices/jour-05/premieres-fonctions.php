@@ -1,15 +1,19 @@
-<?php  
-
-function greet(): void {
-    echo "Bienvenue sur RétroLand !</br>";
+<?php
+function greet()
+{
+    echo "<br>Bienvenue sur la boutique !";
 }
 
-function greetClient($name): void {
-    echo "Bienvenue sur RétroLand, " . $name . " !</br>";
-}   
+function  greetClient(string $name)
+{
+    echo "<br>Bienvenue $name";
+}
 
-greet();
-greet();   
-greetClient("Alice");
-greetClient("Bob");
-?>  
+$message = greet();
+$message2 = greetClient("Pierre");
+
+$message = greet();
+$message2 = greetClient("Marie");
+
+$message = greet();
+$message2 = greetClient("Patrick");

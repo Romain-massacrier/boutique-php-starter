@@ -1,96 +1,69 @@
 <?php
-require_once __DIR__ . '/../app/data.php';
-require_once __DIR__ . '/../app/helpers.php';
+// public/produit.php
+require_once "../app/data.php";
+require_once "../app/helpers.php";
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-if ($id === null || $id === false) {
-    http_response_code(400);
-    echo "ID invalide";
-    exit;
-}
-
-// Recherche du produit par son vrai id
+// Récupération de l'ID depuis l'URL
+$id = $_GET['id'] ?? null;
 $product = null;
-foreach ($products as $p) {
-    if ((int)$p['id'] === (int)$id) {
-        $product = $p;
-        break;
+
+// Recherche du produit dans le tableau
+if ($id) {
+    foreach ($products as $p) {
+        if ($p['id'] == $id) {
+            $product = $p;
+            break;
+        }
     }
 }
 
+// Si produit non trouvé
 if (!$product) {
-    http_response_code(404);
-    echo "Produit non trouvé";
+    echo "<h1>Produit introuvable</h1><a href='catalogue.php'>Retour au catalogue</a>";
     exit;
 }
 
-// Sécurisation des champs
-$name = $product['name'] ?? 'Produit';
-$image = $product['image'] ?? 'https://via.placeholder.com/520x520?text=No+Image';
-$desc = $product['description'] ?? '';
-$price = $product['price'] ?? 0;
-$stock = $product['stock'] ?? 0;
-$discount = $product['discount'] ?? 0;
-$vat = 20;
+// Données du produit trouvé
+$name = $product['name'];
+$description = $product['description'] ?? "Aucune description disponible.";
+$priceHT = $product['price'];
+$stock = $product['stock'];
+$vatPercent = 20;
+
+// Calculs
+$priceTTC = calculateIncludingTax($priceHT, $vatPercent);
+$vatAmount = calculateVAT($priceHT, $vatPercent);
 ?>
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title><?php echo htmlspecialchars($name); ?></title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="utf-8">
+    <title><?= htmlspecialchars($name) ?></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light py-4">
+    <div class="container" style="max-width: 720px;">
+        <a href="catalogue.php" class="btn btn-link mb-3">&larr; Retour au catalogue</a>
+        
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <span class="badge bg-secondary mb-2"><?= ucfirst($product['category']) ?></span>
+                <h1 class="h3 mb-2"><?= htmlspecialchars($name) ?></h1>
+                <p class="text-secondary mb-4"><?= htmlspecialchars($description) ?></p>
 
-<header>
-    <h1><?php echo htmlspecialchars($name); ?></h1>
-    <nav>
-        <a href="catalogue.php">Retour catalogue</a>
-    </nav>
-</header>
+                <div class="alert alert-light border">
+                    <p class="mb-1">Prix HT : <?= number_format($priceHT, 2) ?> €</p>
+                    <p class="mb-1">TVA (<?= $vatPercent ?>%) : <?= number_format($vatAmount, 2) ?> €</p>
+                    <hr>
+                    <p class="mb-0 fs-4">Prix TTC : <strong><?= number_format($priceTTC, 2) ?> €</strong></p>
+                </div>
 
-<main>
-    <div class="product-detail">
-
-        <img src="<?php echo htmlspecialchars($image); ?>" alt="<?php echo htmlspecialchars($name); ?>">
-
-        <div class="product-info">
-
-            <div class="badges">
-                <?php
-                if (function_exists('displayBadges')) {
-                    echo displayBadges($product);
-                }
-                ?>
+                <div class="mt-3">
+                    <?= displayStock($stock) ?>
+                </div>
             </div>
-
-            <div class="price">
-                <?php
-                if (function_exists('displayPriceTTC')) {
-                    echo displayPriceTTC($price, $vat, $discount);
-                } else {
-                    echo number_format($price, 2, ',', ' ') . " €";
-                }
-                ?>
-            </div>
-
-            <div class="stock-status">
-                <?php
-                if (function_exists('displayStockStatus')) {
-                    echo displayStockStatus($stock);
-                } else {
-                    echo ($stock > 0) ? "En stock" : "Rupture";
-                }
-                ?>
-            </div>
-
-            <?php if ($desc): ?>
-                <p><?php echo htmlspecialchars($desc); ?></p>
-            <?php endif; ?>
-
         </div>
     </div>
-</main>
-
 </body>
 </html>
