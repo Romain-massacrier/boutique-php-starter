@@ -1,7 +1,5 @@
 <?php
 
-// Classe Product
-
 class Product
 {
     public string $name;
@@ -13,8 +11,6 @@ class Product
         $this->price = $price;
     }
 }
-
-// Classe CartItem
 class CartItem
 {
     public Product $product;
